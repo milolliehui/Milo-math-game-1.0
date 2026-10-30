@@ -1,0 +1,2621 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Milo Math" />
+  <title>Milo's Math Crafter 思維數理探索 (Think Academy × CTY)</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17" defer></script>
+  <style>
+    :root {
+      --bg-page: #F1F5F9;
+      --bg-card: #FFFFFF;
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --accent-blue: #2563EB;
+      --accent-indigo: #4F46E5;
+      --accent-emerald: #059669;
+      --accent-amber: #D97706;
+      --border-light: #E2E8F0;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      padding-bottom: max(env(safe-area-inset-bottom, 16px), 16px);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: 'Noto Sans TC', 'PingFang TC', 'Heiti TC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+    }
+    /* Offline-Resilient Core Utility Fallbacks (Functions even if Tailwind CDN is unreachable) */
+    .hidden {
+      display: none !important;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+    .safe-top-header {
+      padding-top: max(env(safe-area-inset-top, 14px), 14px);
+      padding-bottom: 10px;
+      padding-left: max(env(safe-area-inset-left, 12px), 12px);
+      padding-right: max(env(safe-area-inset-right, 12px), 12px);
+      background-color: #FFFFFF;
+      border-bottom: 1px solid #E2E8F0;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+    .app-card {
+      background-color: #FFFFFF;
+      border-radius: 16px;
+      border: 1px solid #E2E8F0;
+      padding: 18px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+    }
+    .touch-btn {
+      transition: transform 0.1s ease, box-shadow 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: pointer;
+    }
+    .touch-btn:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+    .touch-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+    .cty-choice-btn.selected {
+      background-color: #EEF2FF !important;
+      border-color: #4F46E5 !important;
+      color: #312E81 !important;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+    }
+    .mic-pulse {
+      animation: pulseRing 1.4s infinite;
+    }
+    @keyframes pulseRing {
+      0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.55); }
+      70% { box-shadow: 0 0 0 14px rgba(220, 38, 38, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+    }
+    .scratch-grid {
+      background-image: radial-gradient(#CBD5E1 1.2px, transparent 1.2px);
+      background-size: 20px 20px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- TOP HUD BAR (Compressed Single-Line with iPadOS Safe-Area Top Padding) -->
+  <header class="safe-top-header shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl" aria-hidden="true">🦉</span>
+        <div>
+          <h1 class="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 leading-none">
+            Milo's Math Crafter <span class="text-indigo-600">思維數理</span>
+          </h1>
+          <p class="text-xs text-slate-500 font-medium mt-0.5">Think Academy 奧數 × Johns Hopkins CTY 數量比較</p>
+        </div>
+      </div>
+
+      <!-- Level Selector Dropdown -->
+      <div class="flex items-center gap-2 flex-1 max-w-md mx-2">
+        <label for="level-select" class="sr-only">選擇關卡</label>
+        <select id="level-select" onchange="handleLevelSelectChange(this.value)" class="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm font-bold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </select>
+      </div>
+
+      <!-- Right Controls: Voice Toggle, Scratchpad Toggle, Emeralds, Cloud Settings -->
+      <div class="flex items-center gap-2">
+        <button id="btn-tts-toggle" type="button" onclick="toggleTtsAutoRead()" class="touch-btn bg-indigo-50 hover:bg-indigo-100 text-indigo-800 border border-indigo-200 font-bold text-xs sm:text-sm px-3 py-2 rounded-xl flex items-center gap-1.5">
+          <span id="tts-icon">🔊</span>
+          <span id="tts-label">普通話: 開</span>
+        </button>
+
+        <button id="btn-scratchpad-toggle" type="button" onclick="toggleScratchpad()" class="touch-btn bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs sm:text-sm px-3 py-2 rounded-xl flex items-center gap-1.5">
+          <span>🎨</span>
+          <span>草稿板</span>
+        </button>
+
+        <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 font-extrabold text-sm px-3 py-1.5 rounded-xl flex items-center gap-1">
+          <span>💎</span>
+          <span id="emerald-count">20</span>
+        </div>
+
+        <button id="btn-parent-modal" type="button" onclick="openParentModal()" class="touch-btn bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 font-bold text-xs sm:text-sm px-3 py-2 rounded-xl flex items-center gap-1">
+          <span>☁️</span>
+          <span class="hidden sm:inline">家長與雲端</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- TOAST BANNER -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 hidden max-w-sm bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl border border-slate-700 text-sm font-semibold flex items-center gap-2">
+    <span id="toast-icon">✨</span>
+    <span id="toast-message">訊息提示</span>
+  </div>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="max-w-7xl w-full mx-auto flex-1 p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+
+    <!-- LEFT COLUMN (5 cols on lg): Problem Card, Visual Diagram, CTY Comparison Card, Reasoning History -->
+    <section class="lg:col-span-5 flex flex-col gap-4">
+
+      <!-- Problem Overview & Visual Diagram Card -->
+      <div class="app-card bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <span id="mission-badge" class="inline-block bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-extrabold px-2.5 py-1 rounded-lg">
+            ⚖️ 盃賽直通車
+          </span>
+          <button id="btn-read-scenario" type="button" onclick="speakCurrentScenario()" class="touch-btn text-xs font-bold text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-2.5 py-1 rounded-lg flex items-center gap-1">
+            <span>🔊</span> 朗讀題目
+          </button>
+        </div>
+
+        <h2 id="mission-title" class="text-lg sm:text-xl font-black text-slate-900 mb-2">
+          載入關卡中
+        </h2>
+
+        <p id="mission-scenario" class="text-slate-700 text-sm sm:text-base leading-relaxed font-medium mb-4">
+        </p>
+
+        <!-- Dynamic Interactive SVG Visual Diagram -->
+        <div id="visual-diagram-box" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center min-h-[190px]">
+        </div>
+      </div>
+
+      <!-- Johns Hopkins CTY SCAT Quantitative Comparison Card -->
+      <div class="app-card bg-white rounded-2xl border-2 border-indigo-200 p-4 sm:p-5 shadow-sm">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-2">
+            <span class="bg-indigo-600 text-white text-xs font-black px-2 py-0.5 rounded">CTY SCAT</span>
+            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">數量比較挑戰 (Quantitative Comparison)</h3>
+          </div>
+          <span id="cty-status-pill" class="text-xs font-bold text-slate-500">可隨時點選</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3 text-center">
+            <div class="text-xs font-extrabold text-blue-700 uppercase tracking-wider mb-1">🅰️ 列 A (Column A)</div>
+            <div id="cty-col-a" class="text-sm sm:text-base font-black text-slate-900"></div>
+          </div>
+          <div class="bg-purple-50/70 border border-purple-200 rounded-xl p-3 text-center">
+            <div class="text-xs font-extrabold text-purple-700 uppercase tracking-wider mb-1">🅱️ 列 B (Column B)</div>
+            <div id="cty-col-b" class="text-sm sm:text-base font-black text-slate-900"></div>
+          </div>
+        </div>
+
+        <!-- 4 One-Tap CTY Choice Buttons -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <button id="cty-btn-A" type="button" onclick="selectCtyChoice('A')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-800 font-bold text-xs sm:text-sm py-2.5 px-2 rounded-xl flex flex-col items-center gap-0.5">
+            <span class="text-base">🅰️</span>
+            <span>列 A 較大</span>
+          </button>
+          <button id="cty-btn-B" type="button" onclick="selectCtyChoice('B')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-800 font-bold text-xs sm:text-sm py-2.5 px-2 rounded-xl flex flex-col items-center gap-0.5">
+            <span class="text-base">🅱️</span>
+            <span>列 B 較大</span>
+          </button>
+          <button id="cty-btn-C" type="button" onclick="selectCtyChoice('C')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-800 font-bold text-xs sm:text-sm py-2.5 px-2 rounded-xl flex flex-col items-center gap-0.5">
+            <span class="text-base">⚖️</span>
+            <span>兩者相等</span>
+          </button>
+          <button id="cty-btn-D" type="button" onclick="selectCtyChoice('D')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-800 font-bold text-xs sm:text-sm py-2.5 px-2 rounded-xl flex flex-col items-center gap-0.5">
+            <span class="text-base">❓</span>
+            <span>條件不足</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Milo's Reasoning Steps So Far -->
+      <div class="app-card bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
+            <span>📜</span> Milo 的推理筆記 (Reasoning Log)
+          </h3>
+          <button id="btn-read-notes" type="button" onclick="speakMiloNotes()" class="touch-btn text-xs font-bold text-slate-600 hover:text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg">
+            🔊 朗讀我的推理
+          </button>
+        </div>
+        <div id="reasoning-log-list" class="space-y-2 text-sm text-slate-700">
+          <p class="text-slate-400 italic text-xs">完成每一步推理後，你的思考過程會記錄在這裡。</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT COLUMN (7 cols on lg): Socratic Coach Leo + Zero-Typing Voice/Chip/Keypad Controls + Scratchpad + Review -->
+    <section class="lg:col-span-7 flex flex-col gap-4">
+
+      <!-- ACTIVE SOCRATIC INTERACTION PANEL -->
+      <div id="active-play-panel" class="app-card bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-sm flex flex-col gap-4">
+
+        <!-- Step Progress Pills -->
+        <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-100 pb-3">
+          <div id="step-pills-container" class="flex items-center gap-2">
+          </div>
+          <span id="step-role-label" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-lg">
+            第一步（共 3 步）
+          </span>
+        </div>
+
+        <!-- Persistent Last-Step Feedback Banner (Anti-Vanish Rule) -->
+        <div id="last-step-feedback" class="hidden bg-emerald-50 border-l-4 border-emerald-500 rounded-r-xl p-3.5 text-sm text-emerald-950">
+          <div class="flex items-center justify-between mb-1">
+            <span id="feedback-badge" class="inline-block bg-emerald-600 text-white text-xs font-extrabold px-2 py-0.5 rounded">
+              💎 絕妙推理!!
+            </span>
+            <button id="btn-replay-feedback" type="button" onclick="speakLastFeedback()" class="touch-btn text-xs font-bold text-emerald-800 underline">
+              🔊 再聽一次教練點評
+            </button>
+          </div>
+          <p id="feedback-text" class="font-semibold leading-relaxed"></p>
+        </div>
+
+        <!-- Coach Leo Question Bubble -->
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-2.5 mb-2">
+              <div class="w-10 h-10 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-xl">
+                🦉
+              </div>
+              <div>
+                <div class="font-extrabold text-slate-900 text-sm">Coach Leo 貓頭鷹數學教練</div>
+                <div class="text-xs text-slate-500">蘇格拉底式引導 • 普通話語音互動</div>
+              </div>
+            </div>
+            <button id="btn-speak-question" type="button" onclick="speakCoachQuestion()" class="touch-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs px-3 py-2 rounded-xl flex items-center gap-1 shrink-0 shadow-sm">
+              <span>🔊</span> 朗讀問題
+            </button>
+          </div>
+
+          <div id="coach-question-text" class="text-slate-900 font-bold text-base sm:text-lg leading-relaxed whitespace-pre-line mt-1">
+          </div>
+
+          <!-- Dynamic Hint Box -->
+          <div id="coach-hint-box" class="hidden mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-950 text-sm font-medium">
+            <div class="font-extrabold text-xs uppercase text-amber-700 mb-0.5">💡 Coach Leo 的思考小提示：</div>
+            <div id="coach-hint-text"></div>
+          </div>
+        </div>
+
+        <!-- ZERO-TYPING MULTIMODAL INPUT AREA -->
+        <div class="flex flex-col gap-3">
+
+          <!-- 1. Big Tap-to-Talk Putonghua Microphone Bar -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btn-mic-toggle" type="button" onclick="toggleVoiceRecognition()" class="touch-btn flex-1 min-w-[210px] bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-sm sm:text-base py-3.5 px-4 rounded-2xl shadow flex items-center justify-center gap-2">
+              <span id="mic-icon" class="text-xl">🎙️</span>
+              <span id="mic-label">點擊用普通話回答 (免打字)</span>
+            </button>
+
+            <button id="btn-get-hint" type="button" onclick="requestSmartHint()" class="touch-btn bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-sm py-3.5 px-4 rounded-2xl flex items-center gap-1.5">
+              <span>💡</span> 給我提示
+            </button>
+          </div>
+
+          <!-- 2. One-Tap Thought Chips (思維積木 — 點擊直接組句) -->
+          <div class="bg-indigo-50/60 border border-indigo-100 rounded-xl p-3">
+            <div class="text-xs font-extrabold text-indigo-800 mb-2 flex items-center justify-between">
+              <span>🧩 點擊下方「思維積木」直接填入回答（完全不用打字）：</span>
+              <span class="text-indigo-500 font-medium">點一下即可加入</span>
+            </div>
+            <div id="thought-chips-container" class="flex flex-wrap gap-2">
+            </div>
+          </div>
+
+          <!-- 3. One-Tap On-Screen Math Keypad (數字與運算符號鍵盤) -->
+          <div class="bg-slate-100 border border-slate-200 rounded-xl p-2.5">
+            <div class="flex items-center justify-between mb-1.5 px-1">
+              <span class="text-xs font-bold text-slate-600">🔢 快速數字與算式鍵盤</span>
+              <button id="btn-clear-input" type="button" onclick="clearStudentInput()" class="touch-btn text-xs font-bold text-rose-600 hover:text-rose-800 px-2 py-0.5 rounded">
+                🗑️ 清空內容
+              </button>
+            </div>
+            <div id="math-keypad" class="grid grid-cols-9 sm:grid-cols-9 gap-1.5">
+              <button type="button" onclick="insertKeypadToken('1')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">1</button>
+              <button type="button" onclick="insertKeypadToken('2')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">2</button>
+              <button type="button" onclick="insertKeypadToken('3')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">3</button>
+              <button type="button" onclick="insertKeypadToken('4')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">4</button>
+              <button type="button" onclick="insertKeypadToken('5')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">5</button>
+              <button type="button" onclick="insertKeypadToken('6')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">6</button>
+              <button type="button" onclick="insertKeypadToken('7')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">7</button>
+              <button type="button" onclick="insertKeypadToken('8')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">8</button>
+              <button type="button" onclick="insertKeypadToken('9')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">9</button>
+              <button type="button" onclick="insertKeypadToken('0')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">0</button>
+              <button type="button" onclick="insertKeypadToken(' + ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">+</button>
+              <button type="button" onclick="insertKeypadToken(' - ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">-</button>
+              <button type="button" onclick="insertKeypadToken(' × ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">×</button>
+              <button type="button" onclick="insertKeypadToken(' ÷ ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">÷</button>
+              <button type="button" onclick="insertKeypadToken(' = ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">=</button>
+              <button type="button" onclick="insertKeypadToken(' > ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">&gt;</button>
+              <button type="button" onclick="insertKeypadToken(' < ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">&lt;</button>
+              <button type="button" onclick="backspaceInput()" class="touch-btn bg-rose-50 border border-rose-200 rounded-lg py-2 font-extrabold text-rose-700 text-sm">⌫</button>
+            </div>
+          </div>
+
+          <!-- 4. Answer Textarea & Submit Button -->
+          <div>
+            <label for="student-input" class="block text-xs font-bold text-slate-600 mb-1">
+              ✏️ Milo 的回答（可用普通話語音、點擊上方積木、或直接輸入）：
+            </label>
+            <textarea id="student-input" rows="3" placeholder="點擊「🎙️ 用普通話回答」說出你的想法，或點選上方的「🧩 思維積木」..." class="w-full rounded-2xl border-2 border-slate-300 focus:border-indigo-600 focus:outline-none p-3.5 text-base font-bold text-slate-900 bg-white"></textarea>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
+            <span id="ai-thinking-indicator" class="hidden text-xs font-bold text-indigo-600 flex items-center gap-1.5">
+              <span>⏳</span> Coach Leo 正在思考你的推理...
+            </span>
+            <div class="flex items-center gap-2 ml-auto">
+              <button id="btn-submit-step" type="button" onclick="submitCurrentStep()" class="touch-btn bg-emerald-600 hover:bg-emerald-700 text-white font-black text-base py-3.5 px-6 rounded-2xl shadow-md flex items-center gap-2">
+                <span>✅</span>
+                <span id="submit-btn-label">提交這一步推理</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- INTERACTIVE TOUCH SCRATCHPAD CANVAS (手寫演算草稿板) -->
+      <div id="scratchpad-panel" class="hidden app-card bg-white rounded-2xl border-2 border-amber-300 p-4 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="text-lg">🎨</span>
+            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">iPad 手寫演算草稿板 (支援手指與 Apple Pencil)</h3>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button type="button" onclick="setScratchPen('#1E293B', 3)" class="touch-btn w-7 h-7 rounded-full bg-slate-800 border-2 border-white shadow" title="黑筆"></button>
+            <button type="button" onclick="setScratchPen('#2563EB', 3)" class="touch-btn w-7 h-7 rounded-full bg-blue-600 border-2 border-white shadow" title="藍筆"></button>
+            <button type="button" onclick="setScratchPen('#DC2626', 3)" class="touch-btn w-7 h-7 rounded-full bg-red-600 border-2 border-white shadow" title="紅筆"></button>
+            <button type="button" onclick="setScratchPen('#059669', 3)" class="touch-btn w-7 h-7 rounded-full bg-emerald-600 border-2 border-white shadow" title="綠筆"></button>
+            <button type="button" onclick="setScratchEraser()" class="touch-btn bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-2.5 py-1.5 rounded-lg border border-slate-300">
+              🧽 橡皮擦
+            </button>
+            <button type="button" onclick="clearScratchpad()" class="touch-btn bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold px-2.5 py-1.5 rounded-lg border border-rose-200">
+              🗑️ 清空畫布
+            </button>
+          </div>
+        </div>
+        <div class="w-full overflow-hidden rounded-xl border border-slate-300 scratch-grid bg-slate-50">
+          <canvas id="scratch-canvas" width="680" height="280" class="w-full h-[260px] touch-none cursor-crosshair"></canvas>
+        </div>
+      </div>
+
+      <!-- MISSION COMPLETE & CHESS.COM-STYLE REVIEW PANEL -->
+      <div id="review-panel" class="hidden app-card bg-white rounded-2xl border-2 border-emerald-400 p-5 sm:p-6 shadow-md flex flex-col gap-4">
+        <div class="flex items-center justify-between flex-wrap gap-2 border-b border-slate-100 pb-3">
+          <div class="flex items-center gap-2.5">
+            <span class="text-3xl">🏆</span>
+            <div>
+              <h3 class="text-lg sm:text-xl font-black text-slate-900">關卡推理完成！Coach Leo 總評</h3>
+              <p id="review-cloud-status" class="text-xs font-bold text-emerald-700">✅ 學習進度已儲存在本機與雲端佇列</p>
+            </div>
+          </div>
+          <button id="btn-next-level" type="button" onclick="goToNextLevel()" class="touch-btn bg-indigo-600 hover:bg-indigo-700 text-white font-black text-sm sm:text-base px-5 py-2.5 rounded-xl shadow flex items-center gap-1.5">
+            <span>➡️</span> 挑戰下一關
+          </button>
+        </div>
+
+        <!-- Move Badges Summary -->
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3">
+            <div id="review-brilliant-count" class="text-2xl font-black text-indigo-700">0</div>
+            <div class="text-xs font-extrabold text-indigo-900 mt-0.5">💎 絕妙推理!!</div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+            <div id="review-great-count" class="text-2xl font-black text-emerald-700">0</div>
+            <div class="text-xs font-extrabold text-emerald-900 mt-0.5">⭐ 思路清晰!</div>
+          </div>
+          <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
+            <div id="review-fix-count" class="text-2xl font-black text-amber-700">0</div>
+            <div class="text-xs font-extrabold text-amber-900 mt-0.5">🔧 小小修正</div>
+          </div>
+        </div>
+
+        <!-- Coach Summary Text & CTY Explanation -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+          <div class="font-extrabold text-sm text-indigo-900">🦉 Coach Leo 的總結：</div>
+          <p id="review-coach-summary" class="text-sm sm:text-base font-bold text-slate-800 leading-relaxed"></p>
+          <div class="pt-2 border-t border-slate-200 text-xs sm:text-sm text-slate-700">
+            <span class="font-extrabold text-slate-900">⚖️ CTY 數量比較解析：</span>
+            <span id="review-cty-explanation"></span>
+          </div>
+        </div>
+
+        <!-- Bonus +10 Emerald Extension Challenge -->
+        <div id="bonus-challenge-box" class="bg-amber-50/90 border-2 border-amber-300 rounded-xl p-4">
+          <div class="font-black text-sm sm:text-base text-amber-950 mb-2" id="bonus-question-text">
+          </div>
+          <div id="bonus-chips-box" class="flex flex-wrap gap-2 mb-2">
+          </div>
+          <div id="bonus-result-msg" class="hidden text-sm font-extrabold text-emerald-800 mt-2">
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- PARENT & CLOUD SETTINGS MODAL -->
+  <div id="parent-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-slate-200 shadow-2xl p-5 sm:p-6">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+        <div>
+          <h2 class="text-lg font-black text-slate-900">☁️ 家長設定與 Google Drive 雲端同步 (Parent &amp; Cloud HUD)</h2>
+          <p class="text-xs text-slate-500">連接獨立 Google Apps Script 代理，自動儲存進度至 Milo_CTY_Math_Tracker 與更新題庫</p>
+        </div>
+        <button id="btn-close-parent-modal" type="button" onclick="closeParentModal()" class="touch-btn bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm px-3 py-1.5 rounded-xl">
+          ✕ 關閉
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="sm:col-span-2">
+            <label for="cfg-webapp-url" class="block text-xs font-extrabold text-slate-700 mb-1">
+              Standalone Google Apps Script Web App URL (必填以連接 Google Drive):
+            </label>
+            <input id="cfg-webapp-url" type="url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono" />
+          </div>
+
+          <div>
+            <label for="cfg-gcp-project" class="block text-xs font-extrabold text-slate-700 mb-1">
+              選項 A：Google Cloud Project ID (Vertex AI — 可直接共用英文遊戲 Project ID):
+            </label>
+            <input id="cfg-gcp-project" type="text" placeholder="例如: milo-writing-crafter-438910" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono" />
+          </div>
+
+          <div>
+            <label for="cfg-gcp-region" class="block text-xs font-extrabold text-slate-700 mb-1">
+              Vertex AI 區域 (Region):
+            </label>
+            <input id="cfg-gcp-region" type="text" value="us-central1" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="cfg-api-key" class="block text-xs font-extrabold text-slate-700 mb-1">
+              選項 B：Gemini API Key (若使用 AI Studio 或瀏覽器直連可填寫):
+            </label>
+            <input id="cfg-api-key" type="password" placeholder="AIzaSy..." class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-mono" />
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 pt-1">
+          <button id="btn-save-cloud" type="button" onclick="saveParentCloudConfig()" class="touch-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl">
+            💾 儲存並同步雲端設定
+          </button>
+          <button id="btn-sync-questions" type="button" onclick="syncQuestionsFromDrive()" class="touch-btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl">
+            🔄 從 Google Drive 載入最新題庫
+          </button>
+          <button id="btn-generate-cloud-level" type="button" onclick="requestCloudNewLevel()" class="touch-btn bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl">
+            ✨ AI 生成新關卡並存入 Drive
+          </button>
+          <button id="btn-export-csv" type="button" onclick="exportLogsCsv()" class="touch-btn bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300">
+            📥 匯出進度 CSV
+          </button>
+          <button id="btn-reset-logs" type="button" onclick="resetLocalProgress()" class="touch-btn bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-rose-200 ml-auto">
+            🗑️ 重設本機紀錄
+          </button>
+        </div>
+
+        <!-- Hidden Parent-Only CTY SCAT Assessment Table -->
+        <div class="pt-4 border-t border-slate-200">
+          <h3 class="text-sm font-extrabold text-slate-900 mb-2">
+            🔒 家長專屬：Johns Hopkins CTY (SCAT) × Think Academy 數理評估紀錄 (Milo 畫面隱藏)
+          </h3>
+          <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-100 text-slate-700 border-b border-slate-200">
+                  <th class="p-2.5 font-extrabold">時間</th>
+                  <th class="p-2.5 font-extrabold">關卡</th>
+                  <th class="p-2.5 font-extrabold">CTY 選擇</th>
+                  <th class="p-2.5 font-extrabold">數感 /10</th>
+                  <th class="p-2.5 font-extrabold">邏輯 /10</th>
+                  <th class="p-2.5 font-extrabold">規律 /10</th>
+                  <th class="p-2.5 font-extrabold">總分 /30</th>
+                  <th class="p-2.5 font-extrabold">SCAT 預估等級</th>
+                </tr>
+              </thead>
+              <tbody id="parent-logs-tbody" class="divide-y divide-slate-100 text-slate-800">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. OFFLINE EMERGENCY PANTRY (window.DEFAULT_BANKS) — Auto-sorted Latest First
+    // =========================================================================
+    window.DEFAULT_BANKS = {
+  "gameTitle": "Milo's Math Crafter 思維數理探索 (Think Academy × CTY)",
+  "version": "1.1.0",
+  "lastUpdated": "2026-10-30",
+  "child": "milo",
+  "folderId": "1OGsR_TEoaC1XYKn0LOU_LcTvGBIhG6wu",
+  "missions": [
+    {
+      "levelId": "L01",
+      "order": 1,
+      "date": "2026-10-30",
+      "title": "第 1 關：天平上的神祕彩球 (五球找異)",
+      "topicCategory": "天平平衡與邏輯推理",
+      "topicBadge": "⚖️ 盃賽直通車 p.17 • 天平推理 × CTY 數量比較",
+      "mode": "socratic",
+      "emeraldReward": 20,
+      "coachName": "Coach Leo",
+      "coachAvatar": "🦉",
+      "visualType": "balance_5",
+      "promptScenario": "有 A、B、C、D、E 五個球，其中四個球重量完全相等，只有一個球的重量與其他球不同。請觀察下方兩次天平稱重的結果，一步步推理出那個特別的球！",
+      "ctyComparison": {
+        "colA": "異常球 E 的重量",
+        "colB": "標準球 C 的重量",
+        "correctChoice": "B",
+        "explanation": "在兩次天平中，(B, C) > (A, E) 且 (A, D) > (B, E)。A 與 B 互換位置後，依然是帶有 E 的右盤比較輕（翹起），證明 A、B、C、D 重量相同，而 E 球比標準球輕！因此列 B（標準球 C）較大。"
+      },
+      "bonusChallenge": {
+        "question": "🎯 進階挑戰 (+10 💎)：如果每個標準球重 10 克，而 E 球輕 2 克，那麼第一次天平左盤 (B + C) 比右盤 (A + E) 重多少克？",
+        "chips": [
+          "重 2 克，因為 20 - 18 = 2",
+          "重 4 克",
+          "重 10 克"
+        ],
+        "expectedKeywords": [
+          "2",
+          "兩",
+          "二"
+        ]
+      },
+      "steps": [
+        {
+          "stepIndex": 1,
+          "role": "第一步（共 3 步）：觀察兩次都出場的球",
+          "coachQuestion": "🗺️ 全題探索藍圖：我們先找出兩次天平都出現的球，再用「位置交換」鎖定唯一的異常球，最後完成 CTY 數量比較！\n\n👉 第一步：請看圖中的兩個天平——左邊是 (B + C) 比 (A + E) 重，右邊是 (A + D) 比 (B + E) 重。有哪些球在兩次稱重中都有上場？",
+          "hint": "🗺️ 整體思路：找共同出現的字母 👉 第一步提示：仔細看兩個天平上的字母，哪三個球在第一次和第二次都有出現？",
+          "thoughtChips": [
+            "A、B、E 三個球兩次都有出現",
+            "C 和 D 只出現了一次",
+            "右邊輕的盤子裡都有 E 球",
+            "A 和 B 交換了左右位置"
+          ],
+          "expectedKeywords": [
+            "A",
+            "B",
+            "E",
+            "右",
+            "兩次"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "role": "第二步（共 3 步）：用交換法鎖定異常球",
+          "coachQuestion": "👉 第二步：觀察得很仔細！第一次 A 在輕盤、B 在重盤；第二次 A 和 B 交換了位置，結果右盤 (B + E) 還是比較輕！既然只有 1 個球重量不同，這說明哪一個球才是真正特別的球？它是偏輕還是偏重？",
+          "hint": "提示：如果 A 或 B 是異常球，它們交換位置後天平傾斜方向應該會改變；但右盤始終比較輕，因為誰一直待在右盤？",
+          "thoughtChips": [
+            "E 球是異常球，而且 E 球比較輕",
+            "因為 E 兩次都在翹起來的輕盤",
+            "A、B、C、D 四個球重量都相等",
+            "不管跟誰搭配，有 E 的那邊就變輕"
+          ],
+          "expectedKeywords": [
+            "E",
+            "輕",
+            "右"
+          ]
+        },
+        {
+          "stepIndex": 3,
+          "role": "第三步（共 3 步）：CTY 數量比較大挑戰",
+          "coachQuestion": "👉 第三步：太棒了，我們找出了 E 是唯一的輕球！現在請看上方的 CTY 數量比較卡：\n【列 A】異常球 E 的重量 vs 【列 B】標準球 C 的重量。\n請點選上方四選一按鈕（或用普通話說出哪一列較大並解釋原因）！",
+          "hint": "提示：既然 E 球比其他標準球都輕，而 C 是標準球，那麼 E 和 C 誰比較重？",
+          "thoughtChips": [
+            "列 B 較大，因為 C 是標準球，E 比標準球輕",
+            "E < C，所以列 B 的重量大於列 A",
+            "兩次天平有 E 的右盤都翹起來，證明 E 最輕"
+          ],
+          "expectedKeywords": [
+            "B",
+            "C",
+            "重",
+            "輕",
+            "大"
+          ]
+        }
+      ]
+    },
+    {
+      "levelId": "L02",
+      "order": 2,
+      "date": "2026-10-30",
+      "title": "第 2 關：八球尋蹤：找出兩個輕球",
+      "topicCategory": "天平平衡與邏輯推理",
+      "topicBadge": "⚖️ 盃賽直通車 p.17 • 多重條件排除 × CTY 比較",
+      "mode": "socratic",
+      "emeraldReward": 25,
+      "coachName": "Coach Leo",
+      "coachAvatar": "🦉",
+      "visualType": "balance_8",
+      "promptScenario": "有 1 到 8 號八個球，其中六個球重量相等，另外兩個球都輕 1 克。鑫鑫用天平稱了 3 次（如下圖），請找出那兩個輕球分別是幾號！",
+      "ctyComparison": {
+        "colA": "(1 號球 + 5 號球) 的總重量",
+        "colB": "(2 號球 + 7 號球) 的總重量",
+        "correctChoice": "B",
+        "explanation": "第一次稱重 (1, 2) > (3, 4)，第二次稱重 (5, 6) < (7, 8)，由於總共只有 2 個輕球，可知 (3, 4) 之中有 1 個輕球，(5, 6) 之中也有 1 個輕球，而 1、2、7、8 號全部是標準球！再看第三次稱重 (1, 3, 5) < (2, 4, 8)，左盤較輕，因此鎖定兩個輕球正是 3 號與 5 號！列 A 含輕球 5 號，列 B 的 2 號與 7 號皆為標準球，故列 B 比列 A 重 1 克（列 B 較大）。"
+      },
+      "bonusChallenge": {
+        "question": "🎯 進階挑戰 (+10 💎)：已知 3 號和 5 號都比標準球輕 1 克，如果在天平左盤放 (3號 + 4號)，右盤放 (5號 + 6號)，天平會怎樣？",
+        "chips": [
+          "兩邊平衡，因為每邊都剛好是 1 個標準球加 1 個輕球",
+          "左盤比較重",
+          "右盤比較重"
+        ],
+        "expectedKeywords": [
+          "平衡",
+          "相等",
+          "一樣"
+        ]
+      },
+      "steps": [
+        {
+          "stepIndex": 1,
+          "role": "第一步（共 3 步）：從前兩個天平鎖定範圍",
+          "coachQuestion": "🗺️ 全題探索藍圖：我們先從前兩個天平找出兩個輕球躲在哪兩個小組，再用第三個天平精準抓出它們的號碼！\n\n👉 第一步：請看前兩個天平：第一個天平 (3, 4) 那邊翹起來（比較輕），第二個天平 (5, 6) 那邊也翹起來（比較輕）。既然總共只有 2 個輕球，這告訴我們兩個輕球分別躲在哪裡？",
+          "hint": "🗺️ 整體思路：分組鎖定範圍 👉 第一步提示：(3, 4) 比 (1, 2) 輕，而且 (5, 6) 比 (7, 8) 輕，說明哪兩組各藏了 1 個輕球？",
+          "thoughtChips": [
+            "3、4 號裡面有 1 個輕球，5、6 號裡面也有 1 個輕球",
+            "1、2、7、8 號全部都是正常重量的標準球",
+            "兩個輕球分別藏在 (3, 4) 和 (5, 6) 這兩組"
+          ],
+          "expectedKeywords": [
+            "3",
+            "4",
+            "5",
+            "6",
+            "各",
+            "正常"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "role": "第二步（共 3 步）：用第三個天平揪出真兇",
+          "coachQuestion": "👉 第二步：推理得太清楚了！(3, 4) 裡有 1 個輕球，(5, 6) 裡有 1 個輕球。現在看最下面的第三個天平：左盤放了 (1, 3, 5)，右盤放了 (2, 4, 8)，結果左盤 (1, 3, 5) 翹起來比較輕！請問那兩個輕球到底是幾號和幾號？",
+          "hint": "提示：1、2、8 都是正常球。左盤放了 3 和 5，右盤放了 4，結果左盤比較輕，說明輕球在左盤！",
+          "thoughtChips": [
+            "兩個輕球分別是 3 號和 5 號",
+            "因為左盤 (1, 3, 5) 比較輕，所以 3 號和 5 號是輕球",
+            "4 號和 6 號是正常球，3 號和 5 號各輕 1 克"
+          ],
+          "expectedKeywords": [
+            "3",
+            "5"
+          ]
+        },
+        {
+          "stepIndex": 3,
+          "role": "第三步（共 3 步）：CTY 數量比較大挑戰",
+          "coachQuestion": "👉 第三步：破案成功！3 號和 5 號是輕球（各輕 1 克），其餘都是正常球。現在請比較：\n【列 A】(1 號球 + 5 號球) 的總重量 vs 【列 B】(2 號球 + 7 號球) 的總重量。\n哪一列比較重？",
+          "hint": "提示：1 號、2 號、7 號都是正常球，只有 5 號是輕球！",
+          "thoughtChips": [
+            "列 B 較大，因為 5 號是輕球，2 號和 7 號都是正常球",
+            "列 A 少了 1 克，所以列 B 比列 A 重 1 克"
+          ],
+          "expectedKeywords": [
+            "B",
+            "2",
+            "7",
+            "5",
+            "輕",
+            "重"
+          ]
+        }
+      ]
+    },
+    {
+      "levelId": "L03",
+      "order": 3,
+      "date": "2026-10-30",
+      "title": "第 3 關：公路兩側的植樹祕密 (兩端都不種)",
+      "topicCategory": "植樹與週期間隔問題",
+      "topicBadge": "🌲 盃賽直通車 p.31 • 植樹間隔 × CTY 數量比較",
+      "mode": "socratic",
+      "emeraldReward": 20,
+      "coachName": "Coach Leo",
+      "coachAvatar": "🦉",
+      "visualType": "trees_road",
+      "promptScenario": "在一條長 63 米的公路兩側種樹，兩端都不種，一共種了 16 棵樹，相鄰兩棵樹之間的距離都相等。請問每隔多少米種一棵樹？",
+      "ctyComparison": {
+        "colA": "相鄰兩棵樹之間的距離（米）",
+        "colB": "8 米",
+        "correctChoice": "B",
+        "explanation": "公路兩側共種 16 棵樹，單側種 16 ÷ 2 = 8 棵樹。因為「兩端都不種」，間隔數 = 棵數 + 1 = 8 + 1 = 9 個間隔。每個間隔長 63 ÷ 9 = 7 米。列 A (7 米) < 列 B (8 米)，所以列 B 較大！"
+      },
+      "bonusChallenge": {
+        "question": "🎯 進階挑戰 (+10 💎)：如果改成「兩端都種樹」，同樣每隔 7 米種一棵，63 米長的公路「單側」需要種幾棵樹？",
+        "chips": [
+          "10 棵樹，因為 9 個間隔 + 1 = 10",
+          "9 棵樹",
+          "8 棵樹"
+        ],
+        "expectedKeywords": [
+          "10",
+          "十"
+        ]
+      },
+      "steps": [
+        {
+          "stepIndex": 1,
+          "role": "第一步（共 3 步）：先算公路單側有幾棵樹",
+          "coachQuestion": "🗺️ 全題探索藍圖：我們先算出公路「一邊」種了幾棵樹，再找出「兩端都不種」時棵數和間隔數的關係，最後算出距離並比較大小！\n\n👉 第一步：題目有一個小陷阱——它說公路「兩側」一共種了 16 棵樹。那麼單看馬路的「其中一側」，種了多少棵樹呢？",
+          "hint": "🗺️ 整體思路：雙側轉單側 👉 第一步提示：把 16 棵樹平均分到馬路左、右兩邊，一邊有幾棵？",
+          "thoughtChips": [
+            "單側種了 8 棵樹，因為 16 ÷ 2 = 8",
+            "馬路兩邊對稱，每邊各有 8 棵樹"
+          ],
+          "expectedKeywords": [
+            "8",
+            "八",
+            "16"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "role": "第二步（共 3 步）：兩端都不種的間隔規律",
+          "coachQuestion": "👉 第二步：沒錯，單側有 8 棵樹！現在想一想：因為公路「兩端都不種樹」，就像在繩子中間剪 1 刀會分成 2 段一樣，在路中間種 8 棵樹，會把 63 米長的公路分成幾個相等的「間隔」？每個間隔是幾米？",
+          "hint": "提示：兩端都不種時，間隔數 = 棵數 + 1。算出間隔數後，用 63 米除以間隔數！",
+          "thoughtChips": [
+            "有 9 個間隔（8 + 1 = 9），每個間隔 63 ÷ 9 = 7 米",
+            "兩端都不種，間隔數比棵數多 1，所以是 9 個間隔",
+            "每隔 7 米種一棵樹"
+          ],
+          "expectedKeywords": [
+            "9",
+            "7",
+            "七",
+            "九"
+          ]
+        },
+        {
+          "stepIndex": 3,
+          "role": "第三步（共 3 步）：CTY 數量比較大挑戰",
+          "coachQuestion": "👉 第三步：太精彩了，每隔 7 米種一棵！現在請看 CTY 數量比較：\n【列 A】相鄰兩棵樹之間的距離（7 米） vs 【列 B】8 米。\n哪一列比較大？如果有人忘記「加 1」直接用 63 ÷ 8，他會踩進什麼陷阱？",
+          "hint": "提示：比較 7 米和 8 米的大小，並說說為什麼間隔數是 9 而不是 8。",
+          "thoughtChips": [
+            "列 B 較大，因為列 A 是 7 米，小於 8 米",
+            "如果直接除以 8 棵樹就錯了，因為兩端不種有 9 個間隔"
+          ],
+          "expectedKeywords": [
+            "B",
+            "7",
+            "8",
+            "9"
+          ]
+        }
+      ]
+    },
+    {
+      "levelId": "L04",
+      "order": 4,
+      "date": "2026-10-30",
+      "title": "第 4 關：古老時鐘的敲鐘陷阱 (週期與間隔)",
+      "topicCategory": "植樹與週期間隔問題",
+      "topicBadge": "🕰️ 盃賽直通車 p.31 • 敲鐘時間 × CTY 倍數陷阱",
+      "mode": "socratic",
+      "emeraldReward": 20,
+      "coachName": "Coach Leo",
+      "coachAvatar": "🦉",
+      "visualType": "clock_chimes",
+      "promptScenario": "有一種時鐘，3 點鐘敲 3 下需要 6 秒鐘。那麼到了 6 點鐘，敲 6 下需要多少秒？",
+      "ctyComparison": {
+        "colA": "6 點鐘敲 6 下所需的秒數",
+        "colB": "12 秒（即 3 點敲鐘時間的 2 倍）",
+        "correctChoice": "A",
+        "explanation": "敲 3 下之間只有 3 - 1 = 2 個時間間隔，耗時 6 秒，代表每個間隔 6 ÷ 2 = 3 秒。敲 6 下有 6 - 1 = 5 個時間間隔，因此需要 5 × 3 = 15 秒！列 A (15 秒) > 列 B (12 秒)，所以列 A 較大。"
+      },
+      "bonusChallenge": {
+        "question": "🎯 進階挑戰 (+10 💎)：按照同樣的規律（每個間隔 3 秒），到了 10 點鐘敲 10 下，一共需要多少秒？",
+        "chips": [
+          "27 秒，因為 (10 - 1) × 3 = 27",
+          "30 秒",
+          "24 秒"
+        ],
+        "expectedKeywords": [
+          "27",
+          "二十七",
+          "9"
+        ]
+      },
+      "steps": [
+        {
+          "stepIndex": 1,
+          "role": "第一步（共 3 步）：找出敲 3 下有幾個等待間隔",
+          "coachQuestion": "🗺️ 全題探索藍圖：我們先算出「敲 3 下」中間隔了幾段等待時間，算出每段幾秒，再推算「敲 6 下」真正需要幾秒！\n\n👉 第一步：當時鐘敲 3 下「噹—噹—噹」時，從第 1 聲到第 3 聲之間，有幾個「等待間隔」？既然總共花了 6 秒，每個間隔是幾秒？",
+          "hint": "🗺️ 整體思路：把敲鐘看成植樹問題 👉 第一步提示：3 聲鐘響就像 3 棵樹，中間有幾個空隙？",
+          "thoughtChips": [
+            "敲 3 下有 2 個間隔（3 - 1 = 2），每個間隔是 6 ÷ 2 = 3 秒",
+            "中間有 2 段等待時間，每段 3 秒"
+          ],
+          "expectedKeywords": [
+            "2",
+            "3",
+            "兩",
+            "三"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "role": "第二步（共 3 步）：推算 6 點敲 6 下的時間",
+          "coachQuestion": "👉 第二步：完全正確，每個間隔是 3 秒！那麼到了 6 點鐘要敲 6 下，從第 1 聲到第 6 聲之間一共有幾個間隔？總共需要多少秒？",
+          "hint": "提示：敲 6 下的間隔數 = 6 - 1。再用間隔數乘以 3 秒！",
+          "thoughtChips": [
+            "敲 6 下有 5 個間隔（6 - 1 = 5），總共需要 5 × 3 = 15 秒",
+            "5 個間隔乘以 3 秒等於 15 秒"
+          ],
+          "expectedKeywords": [
+            "5",
+            "15",
+            "五",
+            "十五"
+          ]
+        },
+        {
+          "stepIndex": 3,
+          "role": "第三步（共 3 步）：CTY 數量比較大挑戰",
+          "coachQuestion": "👉 第三步：太棒了，答案是 15 秒！很多人不假思索會以為「6 是 3 的兩倍，所以 6 秒 × 2 = 12 秒」。請比較：\n【列 A】6 點敲 6 下的真實秒數（15 秒） vs 【列 B】12 秒。\n請選擇哪一列較大，並說說為什麼不能直接把 6 秒乘以 2！",
+          "hint": "提示：間隔數從 2 個變成了 5 個（是 2.5 倍，不是 2 倍）！",
+          "thoughtChips": [
+            "列 A 較大（15 秒 > 12 秒），因為我們算的是間隔數 5 個，不是鐘聲數",
+            "列 A 比列 B 多了 3 秒"
+          ],
+          "expectedKeywords": [
+            "A",
+            "15",
+            "12",
+            "間隔",
+            "5"
+          ]
+        }
+      ]
+    },
+    {
+      "levelId": "L05",
+      "order": 5,
+      "date": "2026-10-30",
+      "title": "第 5 關：公園一筆畫與奇點偵探",
+      "topicCategory": "圖論一筆畫與拓撲",
+      "topicBadge": "✏️ 9月月考複習 p.36 • 一筆畫奇偶點 × CTY 邏輯",
+      "mode": "socratic",
+      "emeraldReward": 25,
+      "coachName": "Coach Leo",
+      "coachAvatar": "🦉",
+      "visualType": "euler_park",
+      "promptScenario": "下圖是一個公園的平面圖（頂點 A 到 H）。要讓遊客一次不重複地走過每一條路，如果入口設在 C 點，出口應該設在哪一點？同時看看五環圖和小房子能不能一筆畫成！",
+      "ctyComparison": {
+        "colA": "小房子圖形中「奇點」的個數",
+        "colB": "2 個",
+        "correctChoice": "C",
+        "explanation": "小房子圖形中，只有中間橫線兩端連出 3 條線（共 2 個奇點），其餘頂點都是偶數條線（偶點），所以奇點個數剛好是 2 個，可以一筆畫成！因此列 A 與列 B 相等。而在公園平面圖中，只有 C 點（連 3 條線）與 F 點（連 5 條線）是奇點，所以 C 進必從 F 出！"
+      },
+      "bonusChallenge": {
+        "question": "🎯 進階挑戰 (+10 💎)：為什麼左邊的「五環圖（五個相交的圓圈）」也能一筆畫成？它有幾個奇點？",
+        "chips": [
+          "0 個奇點！因為每個交點都連出 4 條線（全是偶點），從哪裡出發都能回到原點",
+          "2 個奇點",
+          "5 個奇點"
+        ],
+        "expectedKeywords": [
+          "0",
+          "零",
+          "4",
+          "偶"
+        ]
+      },
+      "steps": [
+        {
+          "stepIndex": 1,
+          "role": "第一步（共 3 步）：認識一筆畫的「奇點」祕密",
+          "coachQuestion": "🗺️ 全題探索藍圖：我們先找出公園地圖中連接奇數條路的「奇點」，確定唯一的出口，再檢驗小房子的一筆畫條件！\n\n👉 第一步：在一筆畫問題中，只要路過一個點，就必須「一進一出」（每次用掉 2 條路）。如果入口設在 C 點（C 點連了 3 條路，是奇點），請數一數公園圖上的其他點，還有哪一個點連出了「奇數條路」？",
+          "hint": "🗺️ 整體思路：奇進奇出規律 👉 第一步提示：數一數 B 點（4條）、H 點（4條）、F 點（幾條？）。哪個點連了 5 條線？",
+          "thoughtChips": [
+            "F 點連了 5 條線，是圖中另一個奇點",
+            "B 點和 H 點都連了 4 條線（偶點），只有 F 點連了 5 條線",
+            "除了 C 點（3 條）之外，只有 F 點（5 條）是奇點"
+          ],
+          "expectedKeywords": [
+            "F",
+            "5",
+            "五"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "role": "第二步（共 3 步）：確定公園出口與小房子檢驗",
+          "coachQuestion": "👉 第二步：好眼力！F 點連了 5 條路。既然一筆畫必須「從一個奇點出發，在另一個奇點結束」，當遊客從 C 點進公園，出口一定在哪一點？另外，請看右邊的「小房子」圖形，它有幾個奇點？能不能一筆畫成？",
+          "hint": "提示：公園出口就是另一個奇點 F！再數數小房子每個角連出幾條線。",
+          "thoughtChips": [
+            "公園出口應設在 F 點；小房子有 2 個奇點，可以一筆畫成",
+            "從 C 點進，一定從 F 點出！"
+          ],
+          "expectedKeywords": [
+            "F",
+            "2",
+            "可以",
+            "能"
+          ]
+        },
+        {
+          "stepIndex": 3,
+          "role": "第三步（共 3 步）：CTY 數量比較大挑戰",
+          "coachQuestion": "👉 第三步：現在請完成 CTY 數量比較：\n【列 A】小房子圖形中「奇點」的個數 vs 【列 B】2 個。\n兩者是什麼關係？如果一個圖形有 4 個奇點，它還能一筆畫成嗎？",
+          "hint": "提示：小房子剛好有 2 個奇點（一作為起點、一作為終點）。",
+          "thoughtChips": [
+            "兩者相等（都是 2 個奇點），所以小房子可以一筆畫成",
+            "如果有 4 個奇點就不能一筆畫成了，至少要兩筆"
+          ],
+          "expectedKeywords": [
+            "C",
+            "相等",
+            "一樣",
+            "2",
+            "不能"
+          ]
+        }
+      ]
+    },
+    {
+      "levelId": "L06",
+      "order": 6,
+      "date": "2026-10-30",
+      "title": "第 6 關：三角形與長方形的組合規律",
+      "topicCategory": "幾何計數與組合規律",
+      "topicBadge": "📐 9月月考複習 p.37 • 圖形有序計數 × CTY 比較",
+      "mode": "socratic",
+      "emeraldReward": 25,
+      "coachName": "Coach Leo",
+      "coachAvatar": "🦉",
+      "visualType": "triangles_grid",
+      "promptScenario": "觀察 p.37 的兩個經典圖形：(1) 由頂點連出射線分成的 5 個基本小三角形，一共能組成多少個三角形？(2) 在 2×3（2 橫排、3 直列）的網格中，一共有多少個長方形？",
+      "ctyComparison": {
+        "colA": "圖 1 中三角形的總個數",
+        "colB": "圖 2（2×3 網格）中長方形的總個數",
+        "correctChoice": "B",
+        "explanation": "圖 1 有 5 個基本小三角形，總數為 5 + 4 + 3 + 2 + 1 = 15 個三角形。圖 2 是 2×3 網格，橫向有 3+2+1 = 6 種選法，縱向有 2+1 = 3 種選法，共有 6 × 3 = 18 個長方形！因此列 B (18 個) > 列 A (15 個)。"
+      },
+      "bonusChallenge": {
+        "question": "🎯 進階挑戰 (+10 💎)：如果在圖 1 的大三角形裡再多畫 1 條射線，變成 6 個基本小三角形，三角形總數會變成幾個？",
+        "chips": [
+          "21 個，因為 15 + 6 = 21",
+          "18 個",
+          "20 個"
+        ],
+        "expectedKeywords": [
+          "21",
+          "二十一"
+        ]
+      },
+      "steps": [
+        {
+          "stepIndex": 1,
+          "role": "第一步（共 3 步）：有序數出所有三角形",
+          "coachQuestion": "🗺️ 全題探索藍圖：我們先用「倒樓梯加法」算出三角形的總數，再用「橫乘豎」算出網格長方形的總數，最後一較高下！\n\n👉 第一步：先看左邊的三角形圖：單獨 1 個小三角形有 5 個；由 2 個小三角形拼成的有 4 個；3 個拼成的有 3 個……把全部加起來（5 + 4 + 3 + 2 + 1），一共有多少個三角形？",
+          "hint": "🗺️ 整體思路：分類有序計數 👉 第一步提示：計算 5 + 4 + 3 + 2 + 1 等於多少？",
+          "thoughtChips": [
+            "一共有 15 個三角形，因為 5 + 4 + 3 + 2 + 1 = 15",
+            "單個有 5 個，合起來是 15 個"
+          ],
+          "expectedKeywords": [
+            "15",
+            "十五"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "role": "第二步（共 3 步）：數出 2×3 網格中的長方形",
+          "coachQuestion": "👉 第二步：15 個三角形完全正確！現在看右邊 2×3（上下 2 層、左右 3 格）的長方形網格：單看一層（3 格）可以數出 3 + 2 + 1 = 6 個長方形。那麼「上層 6 個、下層 6 個、上下兩層合起來又有 6 個」，一共是多少個長方形？",
+          "hint": "提示：上層 6 個 + 下層 6 個 + 上下合併 6 個（也就是 6 × 3）！",
+          "thoughtChips": [
+            "一共有 18 個長方形，因為 6 × 3 = 18",
+            "上層 6 個、下層 6 個、合起來 6 個，共 18 個長方形"
+          ],
+          "expectedKeywords": [
+            "18",
+            "十八"
+          ]
+        },
+        {
+          "stepIndex": 3,
+          "role": "第三步（共 3 步）：CTY 數量比較大挑戰",
+          "coachQuestion": "👉 第三步：太厲害了！現在比較：\n【列 A】圖 1 中三角形的總數（15 個） vs 【列 B】圖 2 中長方形的總數（18 個）。\n哪一列比較大？相差幾個？",
+          "hint": "提示：比較 15 與 18 的大小。",
+          "thoughtChips": [
+            "列 B 較大，因為長方形有 18 個，比三角形的 15 個多 3 個",
+            "18 > 15，所以列 B 較大"
+          ],
+          "expectedKeywords": [
+            "B",
+            "18",
+            "15",
+            "3"
+          ]
+        }
+      ]
+    },
+    {
+      "levelId": "L07",
+      "order": 7,
+      "date": "2026-10-30",
+      "title": "第 7 關：菜場番茄與蘋果分配 (逆向和差)",
+      "topicCategory": "餘數與逆向和差問題",
+      "topicBadge": "🍅 拓展練習 p.19 • 逆向還原 × CTY 差值比較",
+      "mode": "socratic",
+      "emeraldReward": 20,
+      "coachName": "Coach Leo",
+      "coachAvatar": "🦉",
+      "visualType": "apples_tomatoes",
+      "promptScenario": "我們來看 p.19 的兩道題：(1) 一堆蘋果平均分給 6 位小朋友，每人分到 5 個，最後還剩下 2 個蘋果。(2) 菜場有蘿蔔 218 公斤，賣掉 12 公斤番茄後，剩下的番茄還比蘿蔔多 19 公斤。菜場原來有番茄多少公斤？",
+      "ctyComparison": {
+        "colA": "原本蘋果的總個數",
+        "colB": "原本番茄比蘿蔔多的公斤數",
+        "correctChoice": "A",
+        "explanation": "原本蘋果有 6 × 5 + 2 = 32 個（列 A = 32）。賣掉 12 公斤番茄後還比蘿蔔多 19 公斤，代表賣掉之前番茄比蘿蔔多 19 + 12 = 31 公斤（列 B = 31，而原本番茄總重為 218 + 31 = 249 公斤）。因為 32 > 31，所以列 A 較大！"
+      },
+      "bonusChallenge": {
+        "question": "🎯 進階挑戰 (+10 💎)：在蘋果題中，如果想讓 6 位小朋友每人都分到 6 個蘋果而且剛好分完，還需要再補幾個蘋果？",
+        "chips": [
+          "再補 4 個蘋果，因為已經剩 2 個，6 - 2 = 4",
+          "再補 2 個蘋果",
+          "再補 6 個蘋果"
+        ],
+        "expectedKeywords": [
+          "4",
+          "四"
+        ]
+      },
+      "steps": [
+        {
+          "stepIndex": 1,
+          "role": "第一步（共 3 步）：還原蘋果的總數",
+          "coachQuestion": "🗺️ 全題探索藍圖：我們先算出分出去又剩下的蘋果總數，再用「時光倒流法」加回賣掉的番茄，最後比較兩個隱藏數量！\n\n👉 第一步：6 位小朋友每人分到 5 個蘋果，最後還剩下 2 個。請問這堆蘋果原本一共有幾個？",
+          "hint": "🗺️ 整體思路：先乘後加 👉 第一步提示：6 人 × 5 個，再加上剩下的 2 個。",
+          "thoughtChips": [
+            "原本有 32 個蘋果，因為 6 × 5 + 2 = 32",
+            "分出去 30 個加上剩下 2 個，共 32 個"
+          ],
+          "expectedKeywords": [
+            "32",
+            "三十二",
+            "30"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "role": "第二步（共 3 步）：時光倒流算番茄",
+          "coachQuestion": "👉 第二步：32 個蘋果完全正確！現在看番茄題：蘿蔔有 218 公斤。番茄賣掉 12 公斤之後，還比蘿蔔多 19 公斤。如果我們把賣掉的 12 公斤番茄「拿回來」，原本番茄比蘿蔔多幾公斤？原本有番茄多少公斤？",
+          "hint": "提示：賣掉後是 218 + 19 = 237 公斤；把賣掉的 12 公斤加回來，原本比蘿蔔多 19 + 12 = 31 公斤！",
+          "thoughtChips": [
+            "原本番茄比蘿蔔多 31 公斤（19 + 12 = 31），原本有 218 + 31 = 249 公斤",
+            "賣掉後剩 237 公斤，加回 12 公斤等於 249 公斤"
+          ],
+          "expectedKeywords": [
+            "31",
+            "249",
+            "237"
+          ]
+        },
+        {
+          "stepIndex": 3,
+          "role": "第三步（共 3 步）：CTY 數量比較大挑戰",
+          "coachQuestion": "👉 第三步：太棒了，原本有 249 公斤番茄！現在請看這道巧妙的 CTY 數量比較：\n【列 A】原本蘋果的總個數（32） vs 【列 B】原本番茄比蘿蔔多的公斤數（19 + 12 = 31）。\n哪一列比較大？",
+          "hint": "提示：比較 32 和 31 的大小（甚至不用管 218 這個數字）！",
+          "thoughtChips": [
+            "列 A 較大，因為 32 大於 31",
+            "蘋果有 32 個，原本番茄比蘿蔔多 31 公斤，所以列 A 較大"
+          ],
+          "expectedKeywords": [
+            "A",
+            "32",
+            "31"
+          ]
+        }
+      ]
+    },
+    {
+      "levelId": "L08",
+      "order": 8,
+      "date": "2026-10-30",
+      "title": "第 8 關：農場動物與摺星星倍數挑戰",
+      "topicCategory": "倍數關係與逆向差倍",
+      "topicBadge": "⭐ 溫習題 p.42-43 • 順逆倍數線段圖 × CTY 比較",
+      "mode": "socratic",
+      "emeraldReward": 25,
+      "coachName": "Coach Leo",
+      "coachAvatar": "🦉",
+      "visualType": "farm_stars",
+      "promptScenario": "結合 p.42-43 的兩道倍數題：(1) 農場裡有 6 隻豬，羊是豬的 2 倍，奶牛是豬的 3 倍多 2 隻。(2) 姐姐和妹妹比賽摺星星，姐姐摺了 27 個，是妹妹的 4 倍多 3 個。請問妹妹摺了多少個星星？",
+      "ctyComparison": {
+        "colA": "農場裡「奶牛」的隻數",
+        "colB": "妹妹摺星星數量的 3 倍",
+        "correctChoice": "A",
+        "explanation": "奶牛數量 = 6 × 3 + 2 = 20 隻（列 A = 20）。姐姐摺了 27 個，先減去多出的 3 個得 24 個，妹妹摺了 24 ÷ 4 = 6 個；妹妹的 3 倍是 6 × 3 = 18 個（列 B = 18）。因為 20 > 18，所以列 A 較大！"
+      },
+      "bonusChallenge": {
+        "question": "🎯 進階挑戰 (+10 💎)：在農場裡，豬（6 隻）、羊（12 隻）和奶牛（20 隻）三種動物加起來一共有多少隻？",
+        "chips": [
+          "一共 38 隻，因為 6 + 12 + 20 = 38",
+          "一共 36 隻",
+          "一共 32 隻"
+        ],
+        "expectedKeywords": [
+          "38",
+          "三十八"
+        ]
+      },
+      "steps": [
+        {
+          "stepIndex": 1,
+          "role": "第一步（共 3 步）：順向算出羊與奶牛的數量",
+          "coachQuestion": "🗺️ 全題探索藍圖：我們先順向算出農場的羊和奶牛，再用「去尾法」逆向算出妹妹摺了幾顆星星，最後進行 CTY 倍數比較！\n\n👉 第一步：農場有 6 隻豬，羊是豬的 2 倍，奶牛是豬的「3 倍多 2 隻」。請問羊和奶牛分別有幾隻？",
+          "hint": "🗺️ 整體思路：倍數線段法 👉 第一步提示：羊 = 6 × 2；奶牛 = 6 × 3 + 2。",
+          "thoughtChips": [
+            "羊有 12 隻（6 × 2），奶牛有 20 隻（6 × 3 + 2 = 20）",
+            "奶牛是 18 + 2 = 20 隻"
+          ],
+          "expectedKeywords": [
+            "12",
+            "20",
+            "二十"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "role": "第二步（共 3 步）：逆向去尾算妹妹的星星",
+          "coachQuestion": "👉 第二步：完全正確，羊 12 隻、奶牛 20 隻！現在看摺星星：姐姐摺了 27 個，是妹妹的「4 倍多 3 個」。如果我們先把多出來的 3 個拿走（27 - 3），剩下的剛好是妹妹的 4 倍。請問妹妹摺了幾個星星？",
+          "hint": "提示：先算 27 - 3 = 24，再用 24 除以 4！",
+          "thoughtChips": [
+            "妹妹摺了 6 個星星，因為 (27 - 3) ÷ 4 = 24 ÷ 4 = 6",
+            "先減 3 得到 24，再除以 4 等於 6 個"
+          ],
+          "expectedKeywords": [
+            "6",
+            "六",
+            "24"
+          ]
+        },
+        {
+          "stepIndex": 3,
+          "role": "第三步（共 3 步）：CTY 數量比較大挑戰",
+          "coachQuestion": "👉 第三步：太出色了，妹妹摺了 6 個！最後請看 CTY 數量比較：\n【列 A】農場裡「奶牛」的隻數（20） vs 【列 B】妹妹摺星星數量的 3 倍（6 × 3）。\n哪一列比較大？相差多少？",
+          "hint": "提示：奶牛有 20 隻，妹妹的 3 倍是 6 × 3 = 18。",
+          "thoughtChips": [
+            "列 A 較大，因為奶牛有 20 隻，妹妹的 3 倍是 18，列 A 多 2",
+            "20 > 18，所以列 A 較大"
+          ],
+          "expectedKeywords": [
+            "A",
+            "20",
+            "18",
+            "2"
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+    var DEFAULT_WEBAPP_URL = "";
+    var STORAGE_PREFIX = "milo_math_v1_";
+
+    var appState = {
+      missions: [],
+      currentLevelIndex: 0,
+      currentStepIndex: 0,
+      selectedCtyChoice: "",
+      stepHistory: [],
+      brilliantCount: 0,
+      greatCount: 0,
+      quickFixCount: 0,
+      emeralds: 20,
+      ttsEnabled: true,
+      isRecording: false,
+      isSubmittingStep: false,
+      levelCompleted: false,
+      recognition: null,
+      levelStartTime: Date.now(),
+      lastCoachFeedback: "",
+      bonusCompleted: false,
+      logs: [],
+      cloudConfig: {
+        webappUrl: DEFAULT_WEBAPP_URL,
+        gcpProjectId: "",
+        gcpRegion: "us-central1",
+        apiKey: ""
+      }
+    };
+
+    function safeGetStorage(key, fallback) {
+      try {
+        var val = window.localStorage.getItem(STORAGE_PREFIX + key);
+        return val !== null ? val : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    function safeSetStorage(key, value) {
+      try {
+        window.localStorage.setItem(STORAGE_PREFIX + key, value);
+      } catch (e) {}
+    }
+
+    function showToast(msg, icon) {
+      var box = document.getElementById("toast-container");
+      var ic = document.getElementById("toast-icon");
+      var tx = document.getElementById("toast-message");
+      if (!box || !tx) return;
+      ic.textContent = icon || "✨";
+      tx.textContent = msg;
+      box.classList.remove("hidden");
+      if (window._toastTimer) clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(function() {
+        box.classList.add("hidden");
+      }, 3600);
+    }
+
+    var SIMP_TO_TRAD_MAP = {
+      "个": "個", "两": "兩", "侧": "側", "树": "樹", "种": "種", "间": "間", "隔": "隔",
+      "钟": "鐘", "点": "點", "时": "時", "数": "數", "图": "圖", "长": "長", "边": "邊",
+      "顶": "頂", "线": "線", "条": "條", "笔": "筆", "画": "畫", "进": "進", "出": "出",
+      "苹": "蘋", "萝": "蘿", "卜": "蔔", "卖": "賣", "剩": "剩", "猪": "豬", "只": "隻",
+      "姉": "姐", "妹": "妹", "折": "摺", "轻": "輕", "盘": "盤", "号": "號", "称": "稱",
+      "结": "結", "果": "果", "观": "觀", "察": "察", "选": "選", "择": "擇", "题": "題",
+      "与": "與", "为": "為", "因": "因", "这": "這", "那": "那", "里": "裡", "後": "後",
+      "还": "還", "没": "沒", "對": "對", "对": "對", "错": "錯", "倍": "倍", "總": "總",
+      "总": "總", "計": "計", "计": "計", "算": "算", "減": "減", "减": "減", "乘": "乘",
+      "除": "除", "等": "等", "於": "於", "于": "於", "大": "大", "小": "小", "樣": "樣",
+      "样": "樣", "雙": "雙", "双": "雙", "單": "單", "单": "單"
+    };
+
+    function normalizeToTraditional(str) {
+      if (!str) return "";
+      var out = "";
+      for (var i = 0; i < str.length; i++) {
+        var ch = str.charAt(i);
+        out += SIMP_TO_TRAD_MAP[ch] || ch;
+      }
+      return out;
+    }
+
+    // =========================================================================
+    // 2. SPEECH SYNTHESIS (PUTONGHUA TTS) & SPEECH RECOGNITION (STT)
+    // =========================================================================
+    function cancelSpeech() {
+      try {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+        }
+      } catch (e) {}
+    }
+
+    function speakPutonghua(text, force) {
+      if (!text) return;
+      if (!appState.ttsEnabled && !force) return;
+      try {
+        if (!("speechSynthesis" in window)) return;
+        window.speechSynthesis.cancel();
+        var clean = String(text)
+          .replace(/[🗺️👉⚖️🅰️🅱️❓🦉💎⭐🔧🎯🌲🕰️✏️📐🍅🏆🔊🎙️💡✅🏁]/g, "")
+          .replace(/\n+/g, "。");
+        var utter = new SpeechSynthesisUtterance(clean);
+        utter.lang = "zh-CN";
+        utter.rate = 0.95;
+        utter.pitch = 1.02;
+
+        var voices = window.speechSynthesis.getVoices() || [];
+        var preferred = null;
+        for (var i = 0; i < voices.length; i++) {
+          var v = voices[i];
+          var lang = (v.lang || "").toLowerCase();
+          var name = (v.name || "").toLowerCase();
+          if (lang.indexOf("zh-cn") !== -1 || lang.indexOf("cmn") !== -1) {
+            if (name.indexOf("ting") !== -1 || name.indexOf("siri") !== -1 || name.indexOf("premium") !== -1 || name.indexOf("enhanced") !== -1) {
+              preferred = v;
+              break;
+            }
+            if (!preferred) preferred = v;
+          }
+        }
+        if (!preferred) {
+          for (var j = 0; j < voices.length; j++) {
+            if ((voices[j].lang || "").toLowerCase().indexOf("zh-tw") !== -1) {
+              preferred = voices[j];
+              break;
+            }
+          }
+        }
+        if (preferred) utter.voice = preferred;
+        window.speechSynthesis.speak(utter);
+      } catch (e) {}
+    }
+
+    function toggleTtsAutoRead() {
+      appState.ttsEnabled = !appState.ttsEnabled;
+      safeSetStorage("ttsEnabled", appState.ttsEnabled ? "1" : "0");
+      var icon = document.getElementById("tts-icon");
+      var label = document.getElementById("tts-label");
+      if (appState.ttsEnabled) {
+        icon.textContent = "🔊";
+        label.textContent = "普通話: 開";
+        showToast("已開啟普通話自動朗讀", "🔊");
+        speakCoachQuestion();
+      } else {
+        cancelSpeech();
+        icon.textContent = "🔇";
+        label.textContent = "普通話: 關";
+        showToast("已關閉自動朗讀（仍可點擊朗讀按鈕）", "🔇");
+      }
+    }
+
+    function speakCurrentScenario() {
+      var mission = getCurrentMission();
+      if (!mission) return;
+      speakPutonghua(mission.title + "。" + mission.promptScenario, true);
+    }
+
+    function speakCoachQuestion() {
+      var el = document.getElementById("coach-question-text");
+      if (el) speakPutonghua(el.textContent, true);
+    }
+
+    function speakLastFeedback() {
+      if (appState.lastCoachFeedback) {
+        speakPutonghua(appState.lastCoachFeedback, true);
+      }
+    }
+
+    function speakMiloNotes() {
+      if (!appState.stepHistory.length) {
+        showToast("目前還沒有推理筆記喔！", "📜");
+        return;
+      }
+      var allText = appState.stepHistory.map(function(item, idx) {
+        return "第" + (idx + 1) + "步：" + item.studentText;
+      }).join("。 ");
+      speakPutonghua(allText, true);
+    }
+
+    function toggleVoiceRecognition() {
+      var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        showToast("此瀏覽器不支援語音輸入，請直接點選下方思維積木！", "⚠️");
+        return;
+      }
+
+      if (appState.isRecording && appState.recognition) {
+        try {
+          appState.recognition.stop();
+        } catch (e) {}
+        setMicUiState(false);
+        return;
+      }
+
+      cancelSpeech();
+      try {
+        var rec = new SpeechRec();
+        rec.lang = "zh-CN";
+        rec.continuous = false;
+        rec.interimResults = true;
+
+        rec.onstart = function() {
+          setMicUiState(true);
+          showToast("請用普通話說出你的想法...", "🎙️");
+        };
+
+        rec.onresult = function(event) {
+          var transcript = "";
+          for (var i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          var tradText = normalizeToTraditional(transcript);
+          var inputEl = document.getElementById("student-input");
+          if (inputEl && tradText) {
+            if (event.results[event.results.length - 1].isFinal) {
+              var existing = inputEl.value.trim();
+              inputEl.value = existing ? (existing + " " + tradText) : tradText;
+            }
+          }
+        };
+
+        rec.onerror = function() {
+          setMicUiState(false);
+        };
+
+        rec.onend = function() {
+          setMicUiState(false);
+        };
+
+        appState.recognition = rec;
+        rec.start();
+      } catch (err) {
+        setMicUiState(false);
+        showToast("無法啟動麥克風，請檢查 iPad Safari 麥克風權限", "⚠️");
+      }
+    }
+
+    function setMicUiState(recording) {
+      appState.isRecording = recording;
+      var btn = document.getElementById("btn-mic-toggle");
+      var icon = document.getElementById("mic-icon");
+      var label = document.getElementById("mic-label");
+      if (!btn || !icon || !label) return;
+      if (recording) {
+        btn.classList.add("mic-pulse", "bg-red-700");
+        icon.textContent = "⏹️";
+        label.textContent = "正在聽你說普通話... (點擊停止)";
+      } else {
+        btn.classList.remove("mic-pulse", "bg-red-700");
+        icon.textContent = "🎙️";
+        label.textContent = "點擊用普通話回答 (免打字)";
+      }
+    }
+
+    // =========================================================================
+    // 3. INTERACTIVE SVG DIAGRAMS FOR ALL 8 THINK ACADEMY WORKBOOK TOPICS
+    // =========================================================================
+    function renderVisualDiagram(visualType) {
+      var box = document.getElementById("visual-diagram-box");
+      if (!box) return;
+
+      if (visualType === "balance_5") {
+        box.innerHTML =
+          '<div class="text-xs font-extrabold text-slate-600 mb-2">📊 盃賽直通車 p.17：五球稱重天平圖解</div>' +
+          '<svg viewBox="0 0 520 155" class="w-full max-w-[500px] h-auto">' +
+            '<g transform="translate(20, 10)">' +
+              '<text x="105" y="15" text-anchor="middle" font-size="12" font-weight="bold" fill="#334155">第一次稱：(B, C) 下沉較重</text>' +
+              '<polygon points="105,85 85,135 125,135" fill="#64748B" />' +
+              '<line x1="35" y1="95" x2="175" y2="70" stroke="#334155" stroke-width="4" stroke-linecap="round" />' +
+              '<line x1="15" y1="95" x2="65" y2="95" stroke="#475569" stroke-width="3" />' +
+              '<circle cx="28" cy="81" r="13" fill="#3B82F6" /><text x="28" y="86" text-anchor="middle" font-size="13" font-weight="bold" fill="#FFF">B</text>' +
+              '<circle cx="54" cy="81" r="13" fill="#3B82F6" /><text x="54" y="86" text-anchor="middle" font-size="13" font-weight="bold" fill="#FFF">C</text>' +
+              '<line x1="145" y1="70" x2="195" y2="70" stroke="#475569" stroke-width="3" />' +
+              '<circle cx="158" cy="56" r="13" fill="#6366F1" /><text x="158" y="61" text-anchor="middle" font-size="13" font-weight="bold" fill="#FFF">A</text>' +
+              '<circle cx="184" cy="56" r="13" fill="#F59E0B" /><text x="184" y="61" text-anchor="middle" font-size="13" font-weight="bold" fill="#FFF">E</text>' +
+            '</g>' +
+            '<g transform="translate(270, 10)">' +
+              '<text x="105" y="15" text-anchor="middle" font-size="12" font-weight="bold" fill="#334155">第二次稱：(A, D) 下沉較重</text>' +
+              '<polygon points="105,85 85,135 125,135" fill="#64748B" />' +
+              '<line x1="35" y1="95" x2="175" y2="70" stroke="#334155" stroke-width="4" stroke-linecap="round" />' +
+              '<line x1="15" y1="95" x2="65" y2="95" stroke="#475569" stroke-width="3" />' +
+              '<circle cx="28" cy="81" r="13" fill="#6366F1" /><text x="28" y="86" text-anchor="middle" font-size="13" font-weight="bold" fill="#FFF">A</text>' +
+              '<circle cx="54" cy="81" r="13" fill="#3B82F6" /><text x="54" y="86" text-anchor="middle" font-size="13" font-weight="bold" fill="#FFF">D</text>' +
+              '<line x1="145" y1="70" x2="195" y2="70" stroke="#475569" stroke-width="3" />' +
+              '<circle cx="158" cy="56" r="13" fill="#3B82F6" /><text x="158" y="61" text-anchor="middle" font-size="13" font-weight="bold" fill="#FFF">B</text>' +
+              '<circle cx="184" cy="56" r="13" fill="#F59E0B" /><text x="184" y="61" text-anchor="middle" font-size="13" font-weight="bold" fill="#FFF">E</text>' +
+            '</g>' +
+          '</svg>';
+      } else if (visualType === "balance_8") {
+        box.innerHTML =
+          '<div class="text-xs font-extrabold text-slate-600 mb-2">📊 盃賽直通車 p.17：八球三次稱重找兩個輕球</div>' +
+          '<svg viewBox="0 0 540 165" class="w-full max-w-[520px] h-auto">' +
+            '<g transform="translate(10, 8)">' +
+              '<text x="75" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#1E293B">① (1,2) 重、(3,4) 輕</text>' +
+              '<polygon points="75,75 60,115 90,115" fill="#64748B" />' +
+              '<line x1="20" y1="85" x2="130" y2="62" stroke="#334155" stroke-width="3.5" />' +
+              '<circle cx="25" cy="73" r="11" fill="#3B82F6"/><text x="25" y="77" text-anchor="middle" font-size="11" fill="#FFF" font-weight="bold">1</text>' +
+              '<circle cx="48" cy="73" r="11" fill="#3B82F6"/><text x="48" y="77" text-anchor="middle" font-size="11" fill="#FFF" font-weight="bold">2</text>' +
+              '<circle cx="105" cy="50" r="11" fill="#F59E0B"/><text x="105" y="54" text-anchor="middle" font-size="11" fill="#FFF" font-weight="bold">3</text>' +
+              '<circle cx="128" cy="50" r="11" fill="#F59E0B"/><text x="128" y="54" text-anchor="middle" font-size="11" fill="#FFF" font-weight="bold">4</text>' +
+            '</g>' +
+            '<g transform="translate(185, 8)">' +
+              '<text x="75" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#1E293B">② (5,6) 輕、(7,8) 重</text>' +
+              '<polygon points="75,75 60,115 90,115" fill="#64748B" />' +
+              '<line x1="20" y1="62" x2="130" y2="85" stroke="#334155" stroke-width="3.5" />' +
+              '<circle cx="25" cy="50" r="11" fill="#F59E0B"/><text x="25" y="54" text-anchor="middle" font-size="11" fill="#FFF" font-weight="bold">5</text>' +
+              '<circle cx="48" cy="50" r="11" fill="#F59E0B"/><text x="48" y="54" text-anchor="middle" font-size="11" fill="#FFF" font-weight="bold">6</text>' +
+              '<circle cx="105" cy="73" r="11" fill="#3B82F6"/><text x="105" y="77" text-anchor="middle" font-size="11" fill="#FFF" font-weight="bold">7</text>' +
+              '<circle cx="128" cy="73" r="11" fill="#3B82F6"/><text x="128" y="77" text-anchor="middle" font-size="11" fill="#FFF" font-weight="bold">8</text>' +
+            '</g>' +
+            '<g transform="translate(355, 8)">' +
+              '<text x="85" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#1E293B">③ (1,3,5) 輕、(2,4,8) 重</text>' +
+              '<polygon points="85,75 70,115 100,115" fill="#64748B" />' +
+              '<line x1="20" y1="62" x2="150" y2="85" stroke="#334155" stroke-width="3.5" />' +
+              '<circle cx="16" cy="50" r="10" fill="#6366F1"/><text x="16" y="54" text-anchor="middle" font-size="10" fill="#FFF" font-weight="bold">1</text>' +
+              '<circle cx="37" cy="50" r="10" fill="#EF4444"/><text x="37" y="54" text-anchor="middle" font-size="10" fill="#FFF" font-weight="bold">3</text>' +
+              '<circle cx="58" cy="50" r="10" fill="#EF4444"/><text x="58" y="54" text-anchor="middle" font-size="10" fill="#FFF" font-weight="bold">5</text>' +
+              '<circle cx="112" cy="73" r="10" fill="#3B82F6"/><text x="112" y="77" text-anchor="middle" font-size="10" fill="#FFF" font-weight="bold">2</text>' +
+              '<circle cx="133" cy="73" r="10" fill="#3B82F6"/><text x="133" y="77" text-anchor="middle" font-size="10" fill="#FFF" font-weight="bold">4</text>' +
+              '<circle cx="154" cy="73" r="10" fill="#3B82F6"/><text x="154" y="77" text-anchor="middle" font-size="10" fill="#FFF" font-weight="bold">8</text>' +
+            '</g>' +
+          '</svg>';
+      } else if (visualType === "trees_road") {
+        box.innerHTML =
+          '<div class="text-xs font-extrabold text-slate-600 mb-2">🌲 盃賽直通車 p.31：63米公路兩側種樹（兩端都不種，共16棵）</div>' +
+          '<svg viewBox="0 0 520 140" class="w-full max-w-[500px] h-auto">' +
+            '<rect x="30" y="45" width="460" height="50" fill="#E2E8F0" stroke="#94A3B8" stroke-width="2" rx="4" />' +
+            '<line x1="40" y1="70" x2="480" y2="70" stroke="#64748B" stroke-width="2" stroke-dasharray="8,6" />' +
+            '<text x="260" y="74" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E293B">全長 63 米（單側 8 棵樹 ➔ 分成 9 個相等間隔）</text>' +
+            '<text x="30" y="32" text-anchor="middle" font-size="11" font-weight="bold" fill="#DC2626">端點不種</text>' +
+            '<text x="490" y="32" text-anchor="middle" font-size="11" font-weight="bold" fill="#DC2626">端點不種</text>' +
+            '<g fill="#059669">' +
+              '<circle cx="81" cy="30" r="8"/><circle cx="132" cy="30" r="8"/><circle cx="183" cy="30" r="8"/><circle cx="234" cy="30" r="8"/>' +
+              '<circle cx="285" cy="30" r="8"/><circle cx="336" cy="30" r="8"/><circle cx="387" cy="30" r="8"/><circle cx="438" cy="30" r="8"/>' +
+              '<circle cx="81" cy="112" r="8"/><circle cx="132" cy="112" r="8"/><circle cx="183" cy="112" r="8"/><circle cx="234" cy="112" r="8"/>' +
+              '<circle cx="285" cy="112" r="8"/><circle cx="336" cy="112" r="8"/><circle cx="387" cy="112" r="8"/><circle cx="438" cy="112" r="8"/>' +
+            '</g>' +
+          '</svg>';
+      } else if (visualType === "clock_chimes") {
+        box.innerHTML =
+          '<div class="text-xs font-extrabold text-slate-600 mb-2">🕰️ 盃賽直通車 p.31：敲鐘時間間隔圖解</div>' +
+          '<svg viewBox="0 0 520 140" class="w-full max-w-[500px] h-auto">' +
+            '<text x="25" y="28" font-size="12" font-weight="bold" fill="#1E293B">3點敲3下 (共6秒 = 2個間隔)：</text>' +
+            '<circle cx="60" cy="52" r="12" fill="#4F46E5"/><text x="60" y="56" text-anchor="middle" font-size="11" fill="#FFF" font-weight="bold">噹1</text>' +
+            '<line x1="74" y1="52" x2="156" y2="52" stroke="#D97706" stroke-width="3"/><text x="115" y="45" text-anchor="middle" font-size="11" font-weight="bold" fill="#B45309">間隔1 (3秒)</text>' +
+            '<circle cx="170" cy="52" r="12" fill="#4F46E5"/><text x="170" y="56" text-anchor="middle" font-size="11" fill="#FFF" font-weight="bold">噹2</text>' +
+            '<line x1="184" y1="52" x2="266" y2="52" stroke="#D97706" stroke-width="3"/><text x="225" y="45" text-anchor="middle" font-size="11" font-weight="bold" fill="#B45309">間隔2 (3秒)</text>' +
+            '<circle cx="280" cy="52" r="12" fill="#4F46E5"/><text x="280" y="56" text-anchor="middle" font-size="11" fill="#FFF" font-weight="bold">噹3</text>' +
+            '<text x="25" y="95" font-size="12" font-weight="bold" fill="#0F172A">6點敲6下 (有 6 - 1 = 5 個間隔)：</text>' +
+            '<g transform="translate(0, 18)">' +
+              '<circle cx="60" cy="100" r="10" fill="#059669"/><circle cx="135" cy="100" r="10" fill="#059669"/><circle cx="210" cy="100" r="10" fill="#059669"/>' +
+              '<circle cx="285" cy="100" r="10" fill="#059669"/><circle cx="360" cy="100" r="10" fill="#059669"/><circle cx="435" cy="100" r="10" fill="#059669"/>' +
+              '<line x1="72" y1="100" x2="423" y2="100" stroke="#059669" stroke-width="2.5" stroke-dasharray="5,4"/>' +
+            '</g>' +
+          '</svg>';
+      } else if (visualType === "euler_park") {
+        box.innerHTML =
+          '<div class="text-xs font-extrabold text-slate-600 mb-2">✏️ 9月月考複習 p.36：公園平面圖一筆畫與奇點度數</div>' +
+          '<svg viewBox="0 0 520 165" class="w-full max-w-[500px] h-auto">' +
+            '<g transform="translate(30, 12)">' +
+              '<rect x="20" y="15" width="180" height="120" fill="none" stroke="#1E293B" stroke-width="2.5"/>' +
+              '<line x1="80" y1="15" x2="200" y2="65" stroke="#1E293B" stroke-width="2.5"/>' +
+              '<line x1="20" y1="65" x2="200" y2="65" stroke="#1E293B" stroke-width="2.5"/>' +
+              '<line x1="20" y1="65" x2="80" y2="15" stroke="#1E293B" stroke-width="2.5"/>' +
+              '<line x1="20" y1="65" x2="200" y2="105" stroke="#1E293B" stroke-width="2.5"/>' +
+              '<circle cx="80" cy="15" r="9" fill="#3B82F6"/><text x="80" y="19" text-anchor="middle" font-size="10" fill="#FFF" font-weight="bold">H</text>' +
+              '<circle cx="200" cy="65" r="9" fill="#3B82F6"/><text x="200" y="69" text-anchor="middle" font-size="10" fill="#FFF" font-weight="bold">B</text>' +
+              '<circle cx="200" cy="105" r="11" fill="#DC2626"/><text x="200" y="109" text-anchor="middle" font-size="10" fill="#FFF" font-weight="bold">C(3)</text>' +
+              '<circle cx="20" cy="65" r="11" fill="#DC2626"/><text x="20" y="69" text-anchor="middle" font-size="10" fill="#FFF" font-weight="bold">F(5)</text>' +
+              '<text x="110" y="152" text-anchor="middle" font-size="11" font-weight="bold" fill="#334155">公園地圖：紅點 C(3條) 與 F(5條) 為奇點</text>' +
+            '</g>' +
+            '<g transform="translate(310, 15)">' +
+              '<polygon points="80,10 25,55 135,55" fill="none" stroke="#4F46E5" stroke-width="2.5"/>' +
+              '<rect x="25" y="55" width="110" height="75" fill="none" stroke="#4F46E5" stroke-width="2.5"/>' +
+              '<line x1="25" y1="92" x2="135" y2="92" stroke="#4F46E5" stroke-width="2.5"/>' +
+              '<circle cx="25" cy="92" r="8" fill="#DC2626"/>' +
+              '<circle cx="135" cy="92" r="8" fill="#DC2626"/>' +
+              '<text x="80" y="148" text-anchor="middle" font-size="11" font-weight="bold" fill="#334155">小房子：剛好 2 個奇點 (可一筆畫)</text>' +
+            '</g>' +
+          '</svg>';
+      } else if (visualType === "triangles_grid") {
+        box.innerHTML =
+          '<div class="text-xs font-extrabold text-slate-600 mb-2">📐 9月月考複習 p.37：數三角形 (5基本格) 與 2×3 網格數長方形</div>' +
+          '<svg viewBox="0 0 520 155" class="w-full max-w-[500px] h-auto">' +
+            '<g transform="translate(25, 12)">' +
+              '<polygon points="100,10 15,120 185,120" fill="#EEF2FF" stroke="#4F46E5" stroke-width="2.5"/>' +
+              '<line x1="100" y1="10" x2="49" y2="120" stroke="#4F46E5" stroke-width="2"/>' +
+              '<line x1="100" y1="10" x2="83" y2="120" stroke="#4F46E5" stroke-width="2"/>' +
+              '<line x1="100" y1="10" x2="117" y2="120" stroke="#4F46E5" stroke-width="2"/>' +
+              '<line x1="100" y1="10" x2="151" y2="120" stroke="#4F46E5" stroke-width="2"/>' +
+              '<text x="100" y="138" text-anchor="middle" font-size="11" font-weight="bold" fill="#1E293B">圖1：5+4+3+2+1 = 15 個三角形</text>' +
+            '</g>' +
+            '<g transform="translate(285, 20)">' +
+              '<rect x="15" y="10" width="180" height="96" fill="#ECFDF5" stroke="#059669" stroke-width="2.5"/>' +
+              '<line x1="75" y1="10" x2="75" y2="106" stroke="#059669" stroke-width="2"/>' +
+              '<line x1="135" y1="10" x2="135" y2="106" stroke="#059669" stroke-width="2"/>' +
+              '<line x1="15" y1="58" x2="195" y2="58" stroke="#059669" stroke-width="2"/>' +
+              '<text x="105" y="130" text-anchor="middle" font-size="11" font-weight="bold" fill="#1E293B">圖2：(3+2+1) × (2+1) = 18 個長方形</text>' +
+            '</g>' +
+          '</svg>';
+      } else if (visualType === "apples_tomatoes") {
+        box.innerHTML =
+          '<div class="text-xs font-extrabold text-slate-600 mb-2">🍅 拓展練習 p.19：有餘數分配與逆向和差線段圖</div>' +
+          '<svg viewBox="0 0 520 145" class="w-full max-w-[500px] h-auto">' +
+            '<text x="20" y="25" font-size="12" font-weight="bold" fill="#1E293B">① 蘋果分配：6人 × 5個 + 剩2個 = 32個</text>' +
+            '<rect x="20" y="35" width="280" height="22" rx="4" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>' +
+            '<text x="160" y="50" text-anchor="middle" font-size="11" font-weight="bold" fill="#1E40AF">6 位小朋友 × 5 個 = 30 個</text>' +
+            '<rect x="306" y="35" width="60" height="22" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>' +
+            '<text x="336" y="50" text-anchor="middle" font-size="11" font-weight="bold" fill="#92400E">+ 剩 2 個</text>' +
+            '<text x="20" y="84" font-size="12" font-weight="bold" fill="#1E293B">② 菜場番茄逆推：蘿蔔 218kg，番茄賣掉 12kg 後還多 19kg</text>' +
+            '<rect x="20" y="94" width="210" height="22" rx="4" fill="#E2E8F0" stroke="#475569" stroke-width="2"/>' +
+            '<text x="125" y="109" text-anchor="middle" font-size="11" font-weight="bold" fill="#1E293B">蘿蔔：218 公斤</text>' +
+            '<rect x="234" y="94" width="110" height="22" rx="4" fill="#DCFCE7" stroke="#059669" stroke-width="2"/>' +
+            '<text x="289" y="109" text-anchor="middle" font-size="11" font-weight="bold" fill="#065F46">+ 還多 19 kg</text>' +
+            '<rect x="348" y="94" width="110" height="22" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" stroke-dasharray="4,3"/>' +
+            '<text x="403" y="109" text-anchor="middle" font-size="11" font-weight="bold" fill="#991B1B">+ 賣掉 12 kg</text>' +
+          '</svg>';
+      } else {
+        box.innerHTML =
+          '<div class="text-xs font-extrabold text-slate-600 mb-2">⭐ 溫習題 p.42-43：倍數線段圖（農場動物與姐妹摺星星）</div>' +
+          '<svg viewBox="0 0 520 150" class="w-full max-w-[500px] h-auto">' +
+            '<text x="20" y="22" font-size="12" font-weight="bold" fill="#1E293B">① 農場：豬 6 隻 ➔ 奶牛是 3 倍多 2 隻 (6×3 + 2 = 20隻)</text>' +
+            '<rect x="20" y="30" width="80" height="20" rx="4" fill="#E0E7FF" stroke="#4F46E5" stroke-width="2"/>' +
+            '<rect x="104" y="30" width="80" height="20" rx="4" fill="#E0E7FF" stroke="#4F46E5" stroke-width="2"/>' +
+            '<rect x="188" y="30" width="80" height="20" rx="4" fill="#E0E7FF" stroke="#4F46E5" stroke-width="2"/>' +
+            '<rect x="272" y="30" width="50" height="20" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/>' +
+            '<text x="145" y="44" text-anchor="middle" font-size="11" font-weight="bold" fill="#312E81">豬的 3 倍 (6 × 3 = 18)</text>' +
+            '<text x="297" y="44" text-anchor="middle" font-size="11" font-weight="bold" fill="#92400E">+2隻</text>' +
+            '<text x="20" y="82" font-size="12" font-weight="bold" fill="#1E293B">② 摺星星：姐姐 27 個 = 妹妹的 4 倍多 3 個 ➔ 先減 3 再除以 4</text>' +
+            '<rect x="20" y="92" width="65" height="22" rx="4" fill="#DCFCE7" stroke="#059669" stroke-width="2"/>' +
+            '<rect x="89" y="92" width="65" height="22" rx="4" fill="#DCFCE7" stroke="#059669" stroke-width="2"/>' +
+            '<rect x="158" y="92" width="65" height="22" rx="4" fill="#DCFCE7" stroke="#059669" stroke-width="2"/>' +
+            '<rect x="227" y="92" width="65" height="22" rx="4" fill="#DCFCE7" stroke="#059669" stroke-width="2"/>' +
+            '<rect x="296" y="92" width="60" height="22" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" stroke-dasharray="4,2"/>' +
+            '<text x="155" y="107" text-anchor="middle" font-size="11" font-weight="bold" fill="#065F46">妹妹的 4 倍 (27 - 3 = 24 ➔ 每份 6 個)</text>' +
+            '<text x="326" y="107" text-anchor="middle" font-size="11" font-weight="bold" fill="#991B1B">多3個</text>' +
+          '</svg>';
+      }
+    }
+
+    // =========================================================================
+    // 4. CORE GAME ENGINE & ANTI-REDUNDANCY SOCRATIC LOGIC
+    // =========================================================================
+    function getCurrentMission() {
+      return appState.missions[appState.currentLevelIndex] || appState.missions[0];
+    }
+
+    function getCurrentStep() {
+      var m = getCurrentMission();
+      if (!m || !m.steps) return null;
+      return m.steps[appState.currentStepIndex] || m.steps[0];
+    }
+
+    function sortMissionsLatestFirst(missions) {
+      var copy = (missions || []).slice();
+      copy.sort(function(a, b) {
+        var dA = String(a.date || "2026-10-30");
+        var dB = String(b.date || "2026-10-30");
+        if (dA !== dB) return dB.localeCompare(dA);
+        return (a.order || 1) - (b.order || 1);
+      });
+      return copy;
+    }
+
+    function populateLevelDropdown() {
+      var sel = document.getElementById("level-select");
+      if (!sel) return;
+      sel.innerHTML = "";
+      appState.missions.forEach(function(m, idx) {
+        var opt = document.createElement("option");
+        opt.value = String(idx);
+        var tag = idx === 0 ? "★ 最新 • " : "";
+        opt.textContent = tag + m.title;
+        sel.appendChild(opt);
+      });
+      sel.value = String(appState.currentLevelIndex);
+    }
+
+    function handleLevelSelectChange(val) {
+      var idx = parseInt(val, 10) || 0;
+      loadLevel(idx);
+    }
+
+    function loadLevel(idx) {
+      cancelSpeech();
+      appState.currentLevelIndex = idx;
+      appState.currentStepIndex = 0;
+      appState.selectedCtyChoice = "";
+      appState.stepHistory = [];
+      appState.brilliantCount = 0;
+      appState.greatCount = 0;
+      appState.quickFixCount = 0;
+      appState.lastCoachFeedback = "";
+      appState.bonusCompleted = false;
+      appState.isSubmittingStep = false;
+      appState.levelCompleted = false;
+      appState.levelStartTime = Date.now();
+
+      var submitBtn = document.getElementById("btn-submit-step");
+      if (submitBtn) submitBtn.disabled = false;
+
+      var sel = document.getElementById("level-select");
+      if (sel) sel.value = String(idx);
+
+      var m = getCurrentMission();
+      if (!m) return;
+
+      document.getElementById("mission-badge").textContent = m.topicBadge || m.topicCategory;
+      document.getElementById("mission-title").textContent = m.title;
+      document.getElementById("mission-scenario").textContent = m.promptScenario;
+
+      renderVisualDiagram(m.visualType);
+
+      var cmp = m.ctyComparison || { colA: "列 A", colB: "列 B" };
+      document.getElementById("cty-col-a").textContent = cmp.colA;
+      document.getElementById("cty-col-b").textContent = cmp.colB;
+      document.getElementById("cty-status-pill").textContent = "可隨時點選";
+      updateCtyButtonsUi();
+
+      document.getElementById("review-panel").classList.add("hidden");
+      document.getElementById("active-play-panel").classList.remove("hidden");
+      document.getElementById("last-step-feedback").classList.add("hidden");
+
+      renderReasoningLog();
+      renderCurrentStep();
+    }
+
+    function renderCurrentStep() {
+      var m = getCurrentMission();
+      var step = getCurrentStep();
+      if (!m || !step) return;
+
+      var pillsBox = document.getElementById("step-pills-container");
+      pillsBox.innerHTML = "";
+      m.steps.forEach(function(s, i) {
+        var span = document.createElement("span");
+        var isDone = i < appState.currentStepIndex;
+        var isCurr = i === appState.currentStepIndex;
+        span.className = "text-xs font-extrabold px-3 py-1 rounded-full border " +
+          (isCurr ? "bg-indigo-600 text-white border-indigo-600" :
+           isDone ? "bg-emerald-50 text-emerald-700 border-emerald-200" :
+                    "bg-slate-100 text-slate-500 border-slate-200");
+        span.textContent = (isDone ? "✓ " : "") + "第 " + (i + 1) + " 步";
+        pillsBox.appendChild(span);
+      });
+
+      document.getElementById("step-role-label").textContent = step.role || ("第 " + (appState.currentStepIndex + 1) + " 步");
+      document.getElementById("coach-question-text").textContent = step.coachQuestion;
+      document.getElementById("coach-hint-box").classList.add("hidden");
+      document.getElementById("coach-hint-text").textContent = step.hint || "";
+
+      var chipsBox = document.getElementById("thought-chips-container");
+      chipsBox.innerHTML = "";
+      (step.thoughtChips || []).forEach(function(chipText) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "touch-btn bg-white hover:bg-indigo-50 text-indigo-950 border border-indigo-200 font-bold text-xs sm:text-sm px-3 py-2 rounded-xl shadow-sm text-left";
+        btn.textContent = "➕ " + chipText;
+        btn.onclick = function() {
+          appendThoughtChip(chipText);
+        };
+        chipsBox.appendChild(btn);
+      });
+
+      var submitLabel = document.getElementById("submit-btn-label");
+      if (appState.currentStepIndex === m.steps.length - 1) {
+        submitLabel.textContent = "完成推理並查看總評";
+      } else {
+        submitLabel.textContent = "提交這一步推理";
+      }
+
+      document.getElementById("student-input").value = "";
+      speakCoachQuestion();
+    }
+
+    function appendThoughtChip(chipText) {
+      var inputEl = document.getElementById("student-input");
+      if (!inputEl) return;
+      var cur = inputEl.value.trim();
+      inputEl.value = cur ? (cur + "；" + chipText) : chipText;
+      showToast("已加入思維積木！", "🧩");
+    }
+
+    function insertKeypadToken(token) {
+      var inputEl = document.getElementById("student-input");
+      if (!inputEl) return;
+      inputEl.value = inputEl.value + token;
+    }
+
+    function backspaceInput() {
+      var inputEl = document.getElementById("student-input");
+      if (!inputEl || !inputEl.value) return;
+      inputEl.value = inputEl.value.slice(0, -1);
+    }
+
+    function clearStudentInput() {
+      var inputEl = document.getElementById("student-input");
+      if (inputEl) inputEl.value = "";
+    }
+
+    function selectCtyChoice(choice) {
+      appState.selectedCtyChoice = choice;
+      updateCtyButtonsUi();
+      var choiceNames = {
+        "A": "列 A 較大",
+        "B": "列 B 較大",
+        "C": "兩者相等",
+        "D": "條件不足"
+      };
+      var label = choiceNames[choice] || choice;
+      document.getElementById("cty-status-pill").textContent = "已選：" + label;
+
+      var m = getCurrentMission();
+      if (m && appState.currentStepIndex === m.steps.length - 1) {
+        var inputEl = document.getElementById("student-input");
+        if (inputEl && inputEl.value.indexOf(label) === -1) {
+          var cur = inputEl.value.trim();
+          inputEl.value = cur ? ("我選擇【" + label + "】，因為" + cur) : ("我選擇【" + label + "】");
+        }
+      }
+      showToast("已選擇 CTY 答案：" + label, "⚖️");
+    }
+
+    function updateCtyButtonsUi() {
+      ["A", "B", "C", "D"].forEach(function(ch) {
+        var btn = document.getElementById("cty-btn-" + ch);
+        if (!btn) return;
+        if (appState.selectedCtyChoice === ch) {
+          btn.classList.add("selected");
+        } else {
+          btn.classList.remove("selected");
+        }
+      });
+    }
+
+    function requestSmartHint() {
+      var box = document.getElementById("coach-hint-box");
+      var hintTx = document.getElementById("coach-hint-text");
+      if (!box || !hintTx) return;
+      box.classList.remove("hidden");
+      speakPutonghua(hintTx.textContent, true);
+    }
+
+    function evaluateStepLocally(mission, step, studentText, nextStep) {
+      var text = studentText.toUpperCase();
+      var matchedCount = 0;
+      var expected = step.expectedKeywords || [];
+      for (var i = 0; i < expected.length; i++) {
+        if (text.indexOf(expected[i].toUpperCase()) !== -1) {
+          matchedCount++;
+        }
+      }
+
+      var isFinalStep = !nextStep;
+      var ctyCorrect = mission.ctyComparison ? mission.ctyComparison.correctChoice : "B";
+      var badge = "⭐ 思路清晰!";
+      var praise = "";
+
+      if (isFinalStep) {
+        var choseRight = (appState.selectedCtyChoice === ctyCorrect) ||
+          (ctyCorrect === "A" && text.indexOf("列 A") !== -1) ||
+          (ctyCorrect === "B" && text.indexOf("列 B") !== -1) ||
+          (ctyCorrect === "C" && (text.indexOf("相等") !== -1 || text.indexOf("一樣") !== -1));
+        if (choseRight && matchedCount >= 1) {
+          badge = "💎 絕妙推理!!";
+          praise = "太精彩了，Milo！你不僅找出了正確的 CTY 數量比較關係，還把背後的數學結構解釋得清清楚楚！";
+        } else if (choseRight) {
+          badge = "⭐ 思路清晰!";
+          praise = "判斷正確，Milo！" + (mission.ctyComparison ? mission.ctyComparison.explanation : "");
+        } else {
+          badge = "🔧 小小修正";
+          praise = "別急，Milo！我們再對照一下：" + (mission.ctyComparison ? mission.ctyComparison.explanation : "");
+        }
+      } else {
+        if (matchedCount >= 2 || studentText.length >= 12) {
+          badge = "💎 絕妙推理!!";
+          praise = "觀察得非常敏銳，Milo！你抓住了「" + studentText.slice(0, 18) + "」這個關鍵線索！";
+        } else if (matchedCount >= 1) {
+          badge = "⭐ 思路清晰!";
+          praise = "沒錯，Milo！這個方向完全正確，我們順著這個線索繼續往下推！";
+        } else {
+          badge = "🔧 小小修正";
+          praise = "很有趣的想法！不過我們再仔細看一下題目圖解中的關鍵數字（" + (step.hint || "") + "）。";
+        }
+      }
+
+      var dynNextQ = nextStep ? nextStep.coachQuestion : "";
+      var dynNextH = nextStep ? nextStep.hint : "";
+      if (nextStep && nextStep.expectedKeywords) {
+        var aheadMatches = 0;
+        for (var j = 0; j < nextStep.expectedKeywords.length; j++) {
+          if (text.indexOf(nextStep.expectedKeywords[j].toUpperCase()) !== -1) {
+            aheadMatches++;
+          }
+        }
+        if (aheadMatches >= 2) {
+          praise = "哇，Milo 你太神速了！你在這一步已經連下一步的關鍵結論都推出來了！";
+          dynNextQ = "🌟 超前推理挑戰：既然你已經發現了這個規律，請直接看看上方的【列 A】與【列 B】，你能預判哪一邊比較大，或者用一句話驗證你的結論嗎？";
+        }
+      }
+
+      return {
+        moveBadge: badge,
+        coachPraise: praise,
+        dynamicNextQuestion: dynNextQ,
+        dynamicNextHint: dynNextH
+      };
+    }
+
+    function submitCurrentStep() {
+      if (appState.isSubmittingStep || appState.levelCompleted) return;
+
+      var m = getCurrentMission();
+      var step = getCurrentStep();
+      if (!m || !step) return;
+
+      var inputEl = document.getElementById("student-input");
+      var studentText = (inputEl ? inputEl.value : "").trim();
+
+      if (!studentText && appState.selectedCtyChoice && appState.currentStepIndex === m.steps.length - 1) {
+        studentText = "我選擇 " + appState.selectedCtyChoice;
+      }
+
+      if (!studentText) {
+        showToast("請先點擊🎙️用普通話說一句話，或點選一個「🧩 思維積木」喔！", "🦉");
+        return;
+      }
+
+      appState.isSubmittingStep = true;
+      var submitBtn = document.getElementById("btn-submit-step");
+      if (submitBtn) submitBtn.disabled = true;
+
+      var nextStep = m.steps[appState.currentStepIndex + 1] || null;
+      var reasoningSoFar = appState.stepHistory.map(function(h) {
+        return h.role + ": " + h.studentText;
+      }).join("\n");
+
+      var indicator = document.getElementById("ai-thinking-indicator");
+      if (indicator) indicator.classList.remove("hidden");
+
+      callCloudOrFallbackTurn({
+        action: "socratic_turn",
+        promptScenario: m.promptScenario,
+        colA: m.ctyComparison ? m.ctyComparison.colA : "",
+        colB: m.ctyComparison ? m.ctyComparison.colB : "",
+        reasoningSoFar: reasoningSoFar,
+        stepGoal: step.coachQuestion,
+        studentText: studentText,
+        nextStepGoal: nextStep ? nextStep.coachQuestion : "完成 CTY 數量比較",
+        nextStepBaseHint: nextStep ? nextStep.hint : ""
+      }, function(cloudCoachResp) {
+        setTimeout(function() {
+          appState.isSubmittingStep = false;
+          if (submitBtn && !appState.levelCompleted) submitBtn.disabled = false;
+        }, 450);
+        if (indicator) indicator.classList.add("hidden");
+
+        var evalResult = cloudCoachResp || evaluateStepLocally(m, step, studentText, nextStep);
+        var badge = evalResult.moveBadge || "⭐ 思路清晰!";
+        if (badge.indexOf("💎") !== -1) appState.brilliantCount++;
+        else if (badge.indexOf("🔧") !== -1) appState.quickFixCount++;
+        else appState.greatCount++;
+
+        appState.stepHistory.push({
+          stepIndex: step.stepIndex,
+          role: step.role,
+          studentText: studentText,
+          badge: badge,
+          coachPraise: evalResult.coachPraise
+        });
+
+        appState.lastCoachFeedback = evalResult.coachPraise;
+        showPersistentFeedbackBanner(badge, evalResult.coachPraise);
+        renderReasoningLog();
+
+        if (nextStep) {
+          appState.currentStepIndex++;
+          renderCurrentStep();
+          if (evalResult.dynamicNextQuestion) {
+            document.getElementById("coach-question-text").textContent = evalResult.dynamicNextQuestion;
+          }
+          if (evalResult.dynamicNextHint) {
+            document.getElementById("coach-hint-text").textContent = evalResult.dynamicNextHint;
+          }
+          speakPutonghua(evalResult.coachPraise + "。 " + document.getElementById("coach-question-text").textContent, false);
+        } else {
+          finishMission(m, evalResult.coachPraise);
+        }
+      });
+    }
+
+    function showPersistentFeedbackBanner(badge, praiseText) {
+      var banner = document.getElementById("last-step-feedback");
+      var badgeEl = document.getElementById("feedback-badge");
+      var textEl = document.getElementById("feedback-text");
+      if (!banner || !badgeEl || !textEl) return;
+      badgeEl.textContent = badge;
+      textEl.textContent = praiseText;
+      banner.classList.remove("hidden");
+    }
+
+    function renderReasoningLog() {
+      var listEl = document.getElementById("reasoning-log-list");
+      if (!listEl) return;
+      if (!appState.stepHistory.length) {
+        listEl.innerHTML = '<p class="text-slate-400 italic text-xs">完成每一步推理後，你的思考過程會記錄在這裡。</p>';
+        return;
+      }
+      listEl.innerHTML = "";
+      appState.stepHistory.forEach(function(item) {
+        var div = document.createElement("div");
+        div.className = "bg-slate-50 border border-slate-200 rounded-xl p-2.5";
+        div.innerHTML =
+          '<div class="flex items-center justify-between text-xs font-extrabold text-slate-600 mb-1">' +
+            '<span>' + item.role + '</span>' +
+            '<span class="text-indigo-700">' + item.badge + '</span>' +
+          '</div>' +
+          '<div class="text-slate-900 font-bold text-sm">' + item.studentText + '</div>';
+        listEl.appendChild(div);
+      });
+    }
+
+    function finishMission(mission, finalStepPraise) {
+      if (appState.levelCompleted) return;
+      appState.levelCompleted = true;
+
+      var durationSec = Math.max(5, Math.round((Date.now() - appState.levelStartTime) / 1000));
+      var reward = mission.emeraldReward || 20;
+      appState.emeralds += reward;
+      safeSetStorage("emeralds", String(appState.emeralds));
+      document.getElementById("emerald-count").textContent = String(appState.emeralds);
+
+      document.getElementById("active-play-panel").classList.add("hidden");
+      var revPanel = document.getElementById("review-panel");
+      revPanel.classList.remove("hidden");
+
+      document.getElementById("review-brilliant-count").textContent = String(appState.brilliantCount);
+      document.getElementById("review-great-count").textContent = String(appState.greatCount);
+      document.getElementById("review-fix-count").textContent = String(appState.quickFixCount);
+
+      var summaryText = finalStepPraise + " 你完成了「" + mission.title + "」的全部三步推理，獲得 +" + reward + " 💎 寶石！";
+      document.getElementById("review-coach-summary").textContent = summaryText;
+      document.getElementById("review-cty-explanation").textContent =
+        mission.ctyComparison ? mission.ctyComparison.explanation : "";
+
+      renderBonusChallenge(mission);
+      speakPutonghua(summaryText, false);
+
+      var ctyCorrect = mission.ctyComparison ? mission.ctyComparison.correctChoice : "B";
+      var isCtyRight = (appState.selectedCtyChoice === ctyCorrect);
+      var n10 = Math.min(10, Number((7.8 + appState.brilliantCount * 0.7 + (isCtyRight ? 0.6 : 0)).toFixed(1)));
+      var l10 = Math.min(10, Number((8.0 + appState.brilliantCount * 0.6 + (isCtyRight ? 0.5 : 0)).toFixed(1)));
+      var p10 = Math.min(10, Number((7.9 + appState.greatCount * 0.4 + appState.brilliantCount * 0.6).toFixed(1)));
+      var tot30 = Number((n10 + l10 + p10).toFixed(1));
+      var scatBand = tot30 >= 26.5 ? "CTY High Honors Track (SCAT 95%+)" :
+                     tot30 >= 24.0 ? "CTY Honors Track (SCAT 90%+)" :
+                                     "CTY Emerging Talent (SCAT 85%+)";
+
+      var transcript = appState.stepHistory.map(function(h) {
+        return "[" + h.role + "] " + h.studentText + " (" + h.badge + ")";
+      }).join(" | ");
+
+      var logEntry = {
+        timestamp: new Date().toISOString().replace("T", " ").slice(0, 19),
+        missionId: mission.levelId,
+        missionTitle: mission.title,
+        topicCategory: mission.topicCategory,
+        promptScenario: mission.promptScenario,
+        mode: "socratic",
+        stepsCompleted: appState.stepHistory.length,
+        ctyChoice: appState.selectedCtyChoice || "未選",
+        durationSec: durationSec,
+        emeraldsEarned: reward,
+        brilliantCount: appState.brilliantCount,
+        greatCount: appState.greatCount,
+        quickFixCount: appState.quickFixCount,
+        ctyNumberSense10: n10,
+        ctyLogic10: l10,
+        ctyPattern10: p10,
+        ctyTotal30: tot30,
+        scatBand: scatBand,
+        reasoningTranscript: transcript,
+        coachNotes: summaryText
+      };
+
+      appState.logs.unshift(logEntry);
+      safeSetStorage("logs", JSON.stringify(appState.logs));
+      renderParentLogsTable();
+      sendGameReviewAndLogToCloud(logEntry);
+    }
+
+    function renderBonusChallenge(mission) {
+      var box = document.getElementById("bonus-challenge-box");
+      var qText = document.getElementById("bonus-question-text");
+      var chipsBox = document.getElementById("bonus-chips-box");
+      var resMsg = document.getElementById("bonus-result-msg");
+      if (!box || !mission.bonusChallenge) return;
+
+      qText.textContent = mission.bonusChallenge.question;
+      chipsBox.innerHTML = "";
+      resMsg.classList.add("hidden");
+
+      (mission.bonusChallenge.chips || []).forEach(function(chip, idx) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "touch-btn bg-white hover:bg-amber-100 text-amber-950 border border-amber-300 font-bold text-xs sm:text-sm px-3.5 py-2 rounded-xl shadow-sm";
+        btn.textContent = chip;
+        btn.onclick = function() {
+          if (appState.bonusCompleted) return;
+          if (idx === 0) {
+            appState.bonusCompleted = true;
+            appState.emeralds += 10;
+            safeSetStorage("emeralds", String(appState.emeralds));
+            document.getElementById("emerald-count").textContent = String(appState.emeralds);
+            resMsg.textContent = "🎉 答對了！額外獲得 +10 💎 寶石！";
+            resMsg.classList.remove("hidden");
+            speakPutonghua("答對了！額外獲得十顆寶石！", false);
+          } else {
+            resMsg.textContent = "💡 再想一想喔！試試看第一個思路！";
+            resMsg.classList.remove("hidden");
+          }
+        };
+        chipsBox.appendChild(btn);
+      });
+    }
+
+    function goToNextLevel() {
+      var nextIdx = (appState.currentLevelIndex + 1) % appState.missions.length;
+      loadLevel(nextIdx);
+    }
+
+    // =========================================================================
+    // 5. STANDALONE GOOGLE APPS SCRIPT CLOUD BRIDGE (JSONP + CORS POST)
+    // =========================================================================
+    function callCloudOrFallbackTurn(payloadObj, callback) {
+      var url = (appState.cloudConfig.webappUrl || "").trim();
+      var apiKey = (appState.cloudConfig.apiKey || "").trim();
+
+      if (url) {
+        var cbName = "miloGasCb_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+        var scriptEl = document.createElement("script");
+        var finished = false;
+
+        var timer = setTimeout(function() {
+          if (finished) return;
+          finished = true;
+          cleanupJsonp();
+          callback(null);
+        }, 7500);
+
+        function cleanupJsonp() {
+          try {
+            delete window[cbName];
+            if (scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+          } catch (e) {}
+        }
+
+        window[cbName] = function(resp) {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          cleanupJsonp();
+          if (resp && resp.status === "ok" && resp.coachResponse) {
+            callback(resp.coachResponse);
+          } else {
+            callback(null);
+          }
+        };
+
+        var fullPayload = Object.assign({}, payloadObj, {
+          gcpProjectId: appState.cloudConfig.gcpProjectId,
+          gcpLocation: appState.cloudConfig.gcpRegion,
+          apiKey: appState.cloudConfig.apiKey
+        });
+
+        var qStr = "?action=socratic_turn&callback=" + encodeURIComponent(cbName) +
+                   "&payload=" + encodeURIComponent(JSON.stringify(fullPayload));
+        scriptEl.src = url + qStr;
+        scriptEl.onerror = function() {
+          if (finished) return;
+          finished = true;
+          clearTimeout(timer);
+          cleanupJsonp();
+          callback(null);
+        };
+        document.body.appendChild(scriptEl);
+        return;
+      }
+
+      if (apiKey) {
+        var geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + encodeURIComponent(apiKey);
+        var sysPrompt = "你是 Coach Leo，用繁體中文與自然普通話引導 7 歲的 Milo 思考數學題。每次回應控制在 2 句話內，絕不重複他已答出的問題。只回傳 JSON: {\"moveBadge\":\"💎 絕妙推理!! | ⭐ 思路清晰! | 🔧 小小修正\",\"coachPraise\":\"...\",\"dynamicNextQuestion\":\"...\",\"dynamicNextHint\":\"...\"}";
+        var usrPrompt = JSON.stringify(payloadObj);
+        fetch(geminiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: sysPrompt }] },
+            contents: [{ role: "user", parts: [{ text: usrPrompt }] }],
+            generationConfig: { temperature: 0.35, responseMimeType: "application/json" }
+          })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var raw = data.candidates[0].content.parts[0].text;
+          callback(JSON.parse(raw));
+        })
+        .catch(function() {
+          callback(null);
+        });
+        return;
+      }
+
+      callback(null);
+    }
+
+    function sendGameReviewAndLogToCloud(logEntry) {
+      var url = (appState.cloudConfig.webappUrl || "").trim();
+      var statusEl = document.getElementById("review-cloud-status");
+      if (!url) {
+        if (statusEl) statusEl.textContent = "💾 進度已儲存在 iPad 本機（設定 Google Apps Script URL 後可自動同步至 Google Drive）";
+        return;
+      }
+
+      if (statusEl) statusEl.textContent = "⏳ 正在將進度同步至 Google Drive (Milo_CTY_Math_Tracker)...";
+
+      var payload = Object.assign({ action: "game_review" }, logEntry, {
+        gcpProjectId: appState.cloudConfig.gcpProjectId,
+        gcpLocation: appState.cloudConfig.gcpRegion,
+        apiKey: appState.cloudConfig.apiKey
+      });
+
+      var cbName = "miloRevCb_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+      var scriptEl = document.createElement("script");
+      var done = false;
+
+      function cleanup() {
+        try {
+          delete window[cbName];
+          if (scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+        } catch (e) {}
+      }
+
+      window[cbName] = function(resp) {
+        if (done) return;
+        done = true;
+        cleanup();
+        if (resp && resp.status === "ok") {
+          if (statusEl) statusEl.textContent = "☁️ 已同步至 Google Drive (Milo_CTY_Math_Tracker & milo_math_logs.json)";
+          if (resp.review && resp.review.coachSummaryForMilo) {
+            document.getElementById("review-coach-summary").textContent = resp.review.coachSummaryForMilo;
+          }
+          if (resp.review && resp.review.parentHiddenScores && appState.logs.length > 0) {
+            var hs = resp.review.parentHiddenScores;
+            appState.logs[0].ctyNumberSense10 = hs.numberSense10 || appState.logs[0].ctyNumberSense10;
+            appState.logs[0].ctyLogic10 = hs.logic10 || appState.logs[0].ctyLogic10;
+            appState.logs[0].ctyPattern10 = hs.pattern10 || appState.logs[0].ctyPattern10;
+            appState.logs[0].ctyTotal30 = hs.total30 || appState.logs[0].ctyTotal30;
+            appState.logs[0].scatBand = hs.scatBand || appState.logs[0].scatBand;
+            safeSetStorage("logs", JSON.stringify(appState.logs));
+            renderParentLogsTable();
+          }
+          if (resp.autoGeneratedLevel && resp.autoGeneratedLevel.title) {
+            appState.missions.unshift(resp.autoGeneratedLevel);
+            populateLevelDropdown();
+          }
+        }
+      };
+
+      scriptEl.src = url + "?action=game_review&callback=" + encodeURIComponent(cbName) +
+                     "&payload=" + encodeURIComponent(JSON.stringify(payload));
+      scriptEl.onerror = function() {
+        if (done) return;
+        done = true;
+        cleanup();
+        fetch(url, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        }).then(function() {
+          if (statusEl) statusEl.textContent = "☁️ 已透過背景通道同步至 Google Drive";
+        }).catch(function() {});
+      };
+      document.body.appendChild(scriptEl);
+    }
+
+    function syncQuestionsFromDrive() {
+      var url = (document.getElementById("cfg-webapp-url").value || appState.cloudConfig.webappUrl || "").trim();
+      if (!url) {
+        showToast("請先輸入 Google Apps Script Web App URL！", "⚠️");
+        return;
+      }
+      showToast("正在從 Google Drive 同步題庫...", "🔄");
+      var cbName = "miloSyncCb_" + Date.now();
+      var scriptEl = document.createElement("script");
+      window[cbName] = function(resp) {
+        try {
+          delete window[cbName];
+          if (scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+        } catch (e) {}
+        if (resp && resp.status === "ok" && resp.data && resp.data.missions) {
+          appState.missions = sortMissionsLatestFirst(resp.data.missions);
+          populateLevelDropdown();
+          loadLevel(0);
+          showToast("成功從 Google Drive 載入 " + appState.missions.length + " 個關卡！", "✅");
+        } else {
+          showToast("雲端回傳狀態：" + (resp ? resp.status : "無回應"), "ℹ️");
+        }
+      };
+      scriptEl.src = url + "?action=get_questions&callback=" + encodeURIComponent(cbName);
+      scriptEl.onerror = function() {
+        showToast("無法連線至 Apps Script，請確認部署權限設為 Anyone", "⚠️");
+      };
+      document.body.appendChild(scriptEl);
+    }
+
+    function requestCloudNewLevel() {
+      var url = (document.getElementById("cfg-webapp-url").value || appState.cloudConfig.webappUrl || "").trim();
+      if (!url) {
+        showToast("請先儲存 Google Apps Script Web App URL！", "⚠️");
+        return;
+      }
+      showToast("正在請 Gemini 生成新關卡並存入 Google Drive...", "✨");
+      var curMission = getCurrentMission();
+      var cbName = "miloGenCb_" + Date.now();
+      var scriptEl = document.createElement("script");
+      var payload = {
+        missionId: curMission ? curMission.levelId : "L08",
+        missionTitle: curMission ? curMission.title : "",
+        gcpProjectId: appState.cloudConfig.gcpProjectId,
+        gcpLocation: appState.cloudConfig.gcpRegion,
+        apiKey: appState.cloudConfig.apiKey
+      };
+      window[cbName] = function(resp) {
+        try {
+          delete window[cbName];
+          if (scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+        } catch (e) {}
+        if (resp && resp.status === "ok" && resp.newLevel) {
+          appState.missions.unshift(resp.newLevel);
+          populateLevelDropdown();
+          loadLevel(0);
+          closeParentModal();
+          showToast("已生成新關卡：" + resp.newLevel.title, "🎉");
+        } else {
+          showToast("生成新關卡需先設定 Vertex AI Project ID 或 API Key", "ℹ️");
+        }
+      };
+      scriptEl.src = url + "?action=generate_new_level&callback=" + encodeURIComponent(cbName) +
+                     "&payload=" + encodeURIComponent(JSON.stringify(payload));
+      document.body.appendChild(scriptEl);
+    }
+
+    // =========================================================================
+    // 6. TOUCH & APPLE PENCIL SCRATCHPAD CANVAS (True Transparency Eraser)
+    // =========================================================================
+    var scratchCtx = null;
+    var isDrawingScratch = false;
+    var scratchMode = "pen";
+    var scratchColor = "#1E293B";
+    var scratchWidth = 3;
+
+    function initScratchpad() {
+      var canvas = document.getElementById("scratch-canvas");
+      if (!canvas) return;
+      scratchCtx = canvas.getContext("2d");
+      scratchCtx.lineCap = "round";
+      scratchCtx.lineJoin = "round";
+      scratchCtx.globalCompositeOperation = "source-over";
+
+      function getPos(e) {
+        var rect = canvas.getBoundingClientRect();
+        var scaleX = canvas.width / (rect.width || 680);
+        var scaleY = canvas.height / (rect.height || 280);
+        var clientX = e.touches && e.touches.length ? e.touches[0].clientX : e.clientX;
+        var clientY = e.touches && e.touches.length ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) * scaleX,
+          y: (clientY - rect.top) * scaleY
+        };
+      }
+
+      function startDraw(e) {
+        isDrawingScratch = true;
+        var p = getPos(e);
+        scratchCtx.globalCompositeOperation = (scratchMode === "eraser") ? "destination-out" : "source-over";
+        scratchCtx.beginPath();
+        scratchCtx.moveTo(p.x, p.y);
+      }
+
+      function moveDraw(e) {
+        if (!isDrawingScratch) return;
+        if (e.cancelable) e.preventDefault();
+        var p = getPos(e);
+        scratchCtx.globalCompositeOperation = (scratchMode === "eraser") ? "destination-out" : "source-over";
+        scratchCtx.strokeStyle = scratchColor;
+        scratchCtx.lineWidth = scratchWidth;
+        scratchCtx.lineTo(p.x, p.y);
+        scratchCtx.stroke();
+      }
+
+      function endDraw() {
+        isDrawingScratch = false;
+      }
+
+      canvas.addEventListener("mousedown", startDraw);
+      canvas.addEventListener("mousemove", moveDraw);
+      window.addEventListener("mouseup", endDraw);
+
+      canvas.addEventListener("touchstart", startDraw, { passive: false });
+      canvas.addEventListener("touchmove", moveDraw, { passive: false });
+      canvas.addEventListener("touchend", endDraw);
+    }
+
+    function toggleScratchpad() {
+      var panel = document.getElementById("scratchpad-panel");
+      if (!panel) return;
+      panel.classList.toggle("hidden");
+      if (!panel.classList.contains("hidden")) {
+        showToast("已開啟手寫演算草稿板", "🎨");
+      }
+    }
+
+    function setScratchPen(color, width) {
+      scratchMode = "pen";
+      scratchColor = color;
+      scratchWidth = width;
+      if (scratchCtx) {
+        scratchCtx.globalCompositeOperation = "source-over";
+      }
+    }
+
+    function setScratchEraser() {
+      scratchMode = "eraser";
+      scratchWidth = 22;
+      if (scratchCtx) {
+        scratchCtx.globalCompositeOperation = "destination-out";
+      }
+    }
+
+    function clearScratchpad() {
+      var canvas = document.getElementById("scratch-canvas");
+      if (!canvas || !scratchCtx) return;
+      scratchCtx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    // =========================================================================
+    // 7. PARENT SETTINGS & HIDDEN ANALYTICS MODAL
+    // =========================================================================
+    function openParentModal() {
+      document.getElementById("cfg-webapp-url").value = appState.cloudConfig.webappUrl || "";
+      document.getElementById("cfg-gcp-project").value = appState.cloudConfig.gcpProjectId || "";
+      document.getElementById("cfg-gcp-region").value = appState.cloudConfig.gcpRegion || "us-central1";
+      document.getElementById("cfg-api-key").value = appState.cloudConfig.apiKey || "";
+      renderParentLogsTable();
+      document.getElementById("parent-modal").classList.remove("hidden");
+    }
+
+    function closeParentModal() {
+      document.getElementById("parent-modal").classList.add("hidden");
+    }
+
+    function saveParentCloudConfig() {
+      appState.cloudConfig.webappUrl = (document.getElementById("cfg-webapp-url").value || "").trim();
+      appState.cloudConfig.gcpProjectId = (document.getElementById("cfg-gcp-project").value || "").trim();
+      appState.cloudConfig.gcpRegion = (document.getElementById("cfg-gcp-region").value || "us-central1").trim();
+      appState.cloudConfig.apiKey = (document.getElementById("cfg-api-key").value || "").trim();
+
+      safeSetStorage("cloudConfig", JSON.stringify(appState.cloudConfig));
+
+      if (appState.cloudConfig.webappUrl) {
+        var cbName = "miloCfgCb_" + Date.now();
+        var scriptEl = document.createElement("script");
+        var cfgPayload = {
+          action: "save_cloud_config",
+          gcpProjectId: appState.cloudConfig.gcpProjectId,
+          gcpLocation: appState.cloudConfig.gcpRegion,
+          apiKey: appState.cloudConfig.apiKey
+        };
+        window[cbName] = function(resp) {
+          try {
+            delete window[cbName];
+            if (scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
+          } catch (e) {}
+          if (resp && resp.status === "ok") {
+            showToast("雲端設定已成功寫入 Google Apps Script！", "☁️");
+          }
+        };
+        scriptEl.src = appState.cloudConfig.webappUrl + "?action=save_cloud_config&callback=" +
+                       encodeURIComponent(cbName) + "&payload=" + encodeURIComponent(JSON.stringify(cfgPayload));
+        document.body.appendChild(scriptEl);
+      } else {
+        showToast("設定已儲存在 iPad 本機！", "💾");
+      }
+    }
+
+    function renderParentLogsTable() {
+      var tbody = document.getElementById("parent-logs-tbody");
+      if (!tbody) return;
+      if (!appState.logs.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="p-3 text-center text-slate-400 italic">尚無練習紀錄</td></tr>';
+        return;
+      }
+      tbody.innerHTML = "";
+      appState.logs.forEach(function(item) {
+        var tr = document.createElement("tr");
+        tr.innerHTML =
+          '<td class="p-2.5 font-mono">' + (item.timestamp || "") + '</td>' +
+          '<td class="p-2.5 font-bold">' + (item.missionTitle || "") + '</td>' +
+          '<td class="p-2.5 font-bold text-indigo-700">' + (item.ctyChoice || "") + '</td>' +
+          '<td class="p-2.5">' + (item.ctyNumberSense10 || "") + '</td>' +
+          '<td class="p-2.5">' + (item.ctyLogic10 || "") + '</td>' +
+          '<td class="p-2.5">' + (item.ctyPattern10 || "") + '</td>' +
+          '<td class="p-2.5 font-extrabold text-emerald-700">' + (item.ctyTotal30 || "") + '</td>' +
+          '<td class="p-2.5 font-semibold">' + (item.scatBand || "") + '</td>';
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportLogsCsv() {
+      if (!appState.logs.length) {
+        showToast("目前沒有可匯出的紀錄", "ℹ️");
+        return;
+      }
+      var headers = ["Timestamp", "Mission_ID", "Mission_Title", "CTY_Choice", "NumberSense_10", "Logic_10", "Pattern_10", "Total_30", "SCAT_Band", "Transcript"];
+      var rows = appState.logs.map(function(l) {
+        return [
+          l.timestamp, l.missionId, '"' + String(l.missionTitle || "").replace(/"/g, '""') + '"',
+          l.ctyChoice, l.ctyNumberSense10, l.ctyLogic10, l.ctyPattern10, l.ctyTotal30,
+          '"' + String(l.scatBand || "") + '"',
+          '"' + String(l.reasoningTranscript || "").replace(/"/g, '""') + '"'
+        ].join(",");
+      });
+      var csv = "\uFEFF" + headers.join(",") + "\n" + rows.join("\n");
+      var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      var link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "milo_cty_math_logs.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function resetLocalProgress() {
+      appState.logs = [];
+      appState.emeralds = 20;
+      safeSetStorage("logs", "[]");
+      safeSetStorage("emeralds", "20");
+      document.getElementById("emerald-count").textContent = "20";
+      renderParentLogsTable();
+      showToast("已重設本機練習紀錄", "🗑️");
+    }
+
+    // =========================================================================
+    // 8. INITIALIZATION ON WINDOW LOAD
+    // =========================================================================
+    window.onload = function() {
+      var savedEmeralds = parseInt(safeGetStorage("emeralds", "20"), 10);
+      if (!isNaN(savedEmeralds)) appState.emeralds = savedEmeralds;
+      document.getElementById("emerald-count").textContent = String(appState.emeralds);
+
+      appState.ttsEnabled = safeGetStorage("ttsEnabled", "1") !== "0";
+      var ttsIcon = document.getElementById("tts-icon");
+      var ttsLabel = document.getElementById("tts-label");
+      if (ttsIcon && ttsLabel) {
+        ttsIcon.textContent = appState.ttsEnabled ? "🔊" : "🔇";
+        ttsLabel.textContent = appState.ttsEnabled ? "普通話: 開" : "普通話: 關";
+      }
+
+      try {
+        var savedLogs = JSON.parse(safeGetStorage("logs", "[]"));
+        if (Array.isArray(savedLogs)) appState.logs = savedLogs;
+      } catch (e) {}
+
+      try {
+        var savedCfg = JSON.parse(safeGetStorage("cloudConfig", "{}"));
+        if (savedCfg && typeof savedCfg === "object") {
+          appState.cloudConfig = Object.assign(appState.cloudConfig, savedCfg);
+        }
+      } catch (e) {}
+
+      var defaultMissions = (window.DEFAULT_BANKS && window.DEFAULT_BANKS.missions) ? window.DEFAULT_BANKS.missions : [];
+      appState.missions = sortMissionsLatestFirst(defaultMissions);
+
+      populateLevelDropdown();
+      initScratchpad();
+      loadLevel(0);
+
+      if (appState.cloudConfig.webappUrl) {
+        syncQuestionsFromDrive();
+      }
+    };
+  </script>
+</body>
+</html>
