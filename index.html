@@ -305,9 +305,19 @@
               <span id="mic-label">點擊用普通話回答 (免打字)</span>
             </button>
 
+            <button id="btn-keyboard-dictate" type="button" onclick="focusForKeyboardDictation()" class="touch-btn bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 font-extrabold text-xs sm:text-sm py-3.5 px-3.5 rounded-2xl flex items-center gap-1.5" title="使用 iPad 鍵盤內建聽寫">
+              <span>⌨️🎙️</span> iPad 鍵盤聽寫
+            </button>
+
             <button id="btn-get-hint" type="button" onclick="requestSmartHint()" class="touch-btn bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-sm py-3.5 px-4 rounded-2xl flex items-center gap-1.5">
               <span>💡</span> 給我提示
             </button>
+          </div>
+
+          <!-- Live Voice Recognition / Diagnostic Status Banner -->
+          <div id="voice-status-banner" class="hidden rounded-xl border border-indigo-200 bg-indigo-50/90 px-3.5 py-2.5 text-xs sm:text-sm font-bold text-indigo-950 flex items-center justify-between gap-2">
+            <span id="voice-status-text">🎙️ 準備收音...</span>
+            <button id="btn-close-voice-banner" type="button" onclick="hideVoiceStatusBanner()" class="touch-btn text-xs font-extrabold text-indigo-700 hover:text-indigo-950 px-2 py-0.5 rounded">✕</button>
           </div>
 
           <!-- 2. One-Tap Thought Chips (思維積木 — 點擊直接組句) -->
@@ -355,7 +365,7 @@
             <label for="student-input" class="block text-xs font-bold text-slate-600 mb-1">
               ✏️ Milo 的回答（可用普通話語音、點擊上方積木、或直接輸入）：
             </label>
-            <textarea id="student-input" rows="3" placeholder="點擊「🎙️ 用普通話回答」說出你的想法，或點選上方的「🧩 思維積木」..." class="w-full rounded-2xl border-2 border-slate-300 focus:border-indigo-600 focus:outline-none p-3.5 text-base font-bold text-slate-900 bg-white"></textarea>
+            <textarea id="student-input" rows="3" oninput="handleStudentInputLive(this)" placeholder="點擊「🎙️ 用普通話回答」說出你的想法，或點選上方的「🧩 思維積木」..." class="w-full rounded-2xl border-2 border-slate-300 focus:border-indigo-600 focus:outline-none p-3.5 text-base font-bold text-slate-900 bg-white"></textarea>
           </div>
 
           <div class="flex flex-wrap items-center justify-between gap-3 pt-1">
@@ -1291,7 +1301,31 @@
       "还": "還", "没": "沒", "對": "對", "对": "對", "错": "錯", "倍": "倍", "總": "總",
       "总": "總", "計": "計", "计": "計", "算": "算", "減": "減", "减": "減", "乘": "乘",
       "除": "除", "等": "等", "於": "於", "于": "於", "大": "大", "小": "小", "樣": "樣",
-      "样": "樣", "雙": "雙", "双": "雙", "單": "單", "单": "單"
+      "样": "樣", "雙": "雙", "双": "雙", "單": "單", "单": "單", "们": "們", "来": "來",
+      "说": "說", "话": "話", "会": "會", "能": "能", "着": "著", "过": "過", "得": "得",
+      "着": "著", "给": "給", "让": "讓", "把": "把", "被": "被", "从": "從", "向": "向",
+      "到": "到", "在": "在", "有": "有", "无": "無", "没": "沒", "都": "都", "也": "也",
+      "就": "就", "才": "才", "又": "又", "再": "再", "更": "更", "最": "最", "很": "很",
+      "太": "太", "真": "真", "好": "好", "坏": "壞", "多": "多", "少": "少", "高": "高",
+      "低": "低", "左": "左", "右": "右", "上": "上", "下": "下", "前": "前", "后": "後",
+      "内": "內", "外": "外", "中": "中", "间": "間", "东": "東", "西": "西", "南": "南",
+      "北": "北", "紅": "紅", "红": "紅", "蓝": "藍", "绿": "綠", "黄": "黃", "白": "白",
+      "黑": "黑", "球": "球", "重": "重", "量": "量", "相": "相", "同": "同", "不": "不",
+      "比": "比", "较": "較", "翘": "翹", "起": "起", "沉": "沉", "平": "平", "衡": "衡",
+      "换": "換", "位": "位", "置": "置", "标": "標", "准": "準", "异": "異", "常": "常",
+      "第": "第", "一": "一", "二": "二", "三": "三", "四": "四", "五": "五", "六": "六",
+      "七": "七", "八": "八", "九": "九", "十": "十", "百": "百", "千": "千", "万": "萬",
+      "米": "米", "秒": "秒", "分": "分", "克": "克", "公": "公", "斤": "斤", "棵": "棵",
+      "路": "路", "端": "端", "头": "頭", "尾": "尾", "声": "聲", "响": "響", "当": "噹",
+      "奇": "奇", "偶": "偶", "连": "連", "接": "接", "入": "入", "口": "口", "房": "房",
+      "子": "子", "环": "環", "角": "角", "形": "形", "方": "方", "网": "網", "格": "格",
+      "横": "橫", "竖": "豎", "层": "層", "排": "排", "列": "列", "小朋友": "小朋友",
+      "平": "平", "均": "均", "原": "原", "先": "先", "加": "加", "回": "回", "拿": "拿",
+      "走": "走", "农": "農", "场": "場", "羊": "羊", "牛": "牛", "奶": "奶", "星": "星",
+      "應": "應", "应": "應", "該": "該", "该": "該", "發": "發", "发": "發", "現": "現",
+      "现": "現", "規": "規", "规": "規", "律": "律", "條": "條", "件": "件", "足": "足",
+      "無": "無", "法": "法", "確": "確", "确": "確", "定": "定", "選": "選", "擇": "擇",
+      "為": "為", "什": "什", "麼": "麼", "么": "麼", "變": "變", "变": "變", "成": "成"
     };
 
     function normalizeToTraditional(str) {
@@ -1402,61 +1436,251 @@
       speakPutonghua(allText, true);
     }
 
-    function toggleVoiceRecognition() {
-      var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRec) {
-        showToast("此瀏覽器不支援語音輸入，請直接點選下方思維積木！", "⚠️");
-        return;
-      }
-
-      if (appState.isRecording && appState.recognition) {
+    function handleStudentInputLive(textareaEl) {
+      if (!textareaEl) return;
+      var start = textareaEl.selectionStart;
+      var end = textareaEl.selectionEnd;
+      var orig = textareaEl.value;
+      var conv = normalizeToTraditional(orig);
+      if (conv !== orig) {
+        textareaEl.value = conv;
         try {
-          appState.recognition.stop();
+          textareaEl.setSelectionRange(start, end);
         } catch (e) {}
+      }
+    }
+
+    function showVoiceStatusBanner(msg, isWarning) {
+      var banner = document.getElementById("voice-status-banner");
+      var textEl = document.getElementById("voice-status-text");
+      if (!banner || !textEl) return;
+      textEl.textContent = msg;
+      banner.className = isWarning
+        ? "rounded-xl border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-xs sm:text-sm font-bold text-amber-950 flex items-center justify-between gap-2"
+        : "rounded-xl border border-indigo-200 bg-indigo-50/90 px-3.5 py-2.5 text-xs sm:text-sm font-bold text-indigo-950 flex items-center justify-between gap-2";
+      banner.classList.remove("hidden");
+    }
+
+    function hideVoiceStatusBanner() {
+      var banner = document.getElementById("voice-status-banner");
+      if (banner) banner.classList.add("hidden");
+    }
+
+    function focusForKeyboardDictation() {
+      cancelSpeech();
+      var inputEl = document.getElementById("student-input");
+      if (inputEl) {
+        inputEl.focus();
+      }
+      showVoiceStatusBanner("⌨️🎙️ 已聚焦下方輸入框！請直接點擊 iPad 螢幕鍵盤右下角/左下角的「🎙️ 麥克風（聽寫）」圖示說普通話，系統會自動轉為繁體中文！", false);
+      showToast("請點選 iPad 鍵盤上的「🎙️ 聽寫」按鈕說話！", "🎙️");
+    }
+
+    function toggleVoiceRecognition() {
+      cancelSpeech();
+
+      // If currently recording via Web Speech API or MediaRecorder, stop cleanly
+      if (appState.isRecording) {
+        if (appState.recognition) {
+          try {
+            appState.recognition.stop();
+          } catch (e) {}
+        }
+        if (appState.mediaRecorder && appState.mediaRecorder.state !== "inactive") {
+          try {
+            appState.mediaRecorder.stop();
+          } catch (e) {}
+        }
         setMicUiState(false);
         return;
       }
 
-      cancelSpeech();
+      var inputEl = document.getElementById("student-input");
+      appState.micBaseText = inputEl ? inputEl.value.trim() : "";
+      appState.micGotAnyResult = false;
+
+      var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        startMediaRecorderOrDictationFallback("此瀏覽器未內建 Web Speech 語音引擎");
+        return;
+      }
+
       try {
         var rec = new SpeechRec();
         rec.lang = "zh-CN";
-        rec.continuous = false;
+        rec.continuous = true;
         rec.interimResults = true;
+        rec.maxAlternatives = 1;
 
         rec.onstart = function() {
           setMicUiState(true);
-          showToast("請用普通話說出你的想法...", "🎙️");
+          showVoiceStatusBanner("🎙️ 正在收音中（請說普通話，說完再次點擊紅色按鈕停止）...", false);
         };
 
+        // Write BOTH interim (isFinal === false) and final (isFinal === true) transcripts directly into #student-input immediately!
         rec.onresult = function(event) {
-          var transcript = "";
-          for (var i = event.resultIndex; i < event.results.length; i++) {
-            transcript += event.results[i][0].transcript;
-          }
-          var tradText = normalizeToTraditional(transcript);
-          var inputEl = document.getElementById("student-input");
-          if (inputEl && tradText) {
-            if (event.results[event.results.length - 1].isFinal) {
-              var existing = inputEl.value.trim();
-              inputEl.value = existing ? (existing + " " + tradText) : tradText;
+          var fullSessionText = "";
+          for (var i = 0; i < event.results.length; i++) {
+            if (event.results[i] && event.results[i][0]) {
+              fullSessionText += event.results[i][0].transcript;
             }
           }
+          var tradText = normalizeToTraditional(fullSessionText).trim();
+          if (tradText) {
+            appState.micGotAnyResult = true;
+            var box = document.getElementById("student-input");
+            if (box) {
+              box.value = appState.micBaseText ? (appState.micBaseText + " " + tradText) : tradText;
+            }
+            showVoiceStatusBanner("🎙️ 已辨識普通話：「" + tradText + "」", false);
+          }
         };
 
-        rec.onerror = function() {
+        rec.onerror = function(event) {
+          var errCode = (event && event.error) ? String(event.error) : "unknown";
           setMicUiState(false);
+
+          if (errCode === "not-allowed" || errCode === "service-not-allowed") {
+            startMediaRecorderOrDictationFallback("瀏覽器或預覽視窗限制了網頁直接收音 (" + errCode + ")");
+          } else if (errCode === "no-speech") {
+            showVoiceStatusBanner("⚠️ 沒有偵測到聲音。請靠近麥克風再點一次「🎙️ 點擊用普通話回答」，或使用「⌨️🎙️ iPad 鍵盤聽寫」。", true);
+          } else if (errCode === "network") {
+            startMediaRecorderOrDictationFallback("語音伺服器連線受阻 (network)");
+          } else {
+            showVoiceStatusBanner("⚠️ 語音辨識中斷 (" + errCode + ")。您可以再試一次，或點擊「⌨️🎙️ iPad 鍵盤聽寫」。", true);
+          }
         };
 
         rec.onend = function() {
           setMicUiState(false);
+          if (appState.micGotAnyResult) {
+            showToast("已將普通話語音填入回答框！", "✅");
+          }
         };
 
         appState.recognition = rec;
         rec.start();
       } catch (err) {
         setMicUiState(false);
-        showToast("無法啟動麥克風，請檢查 iPad Safari 麥克風權限", "⚠️");
+        startMediaRecorderOrDictationFallback("無法啟動 Web Speech API");
+      }
+    }
+
+    function startMediaRecorderOrDictationFallback(reasonMsg) {
+      var hasCloud = Boolean((appState.cloudConfig.webappUrl || "").trim() || (appState.cloudConfig.apiKey || "").trim());
+      if (hasCloud && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder) {
+        navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+          var chunks = [];
+          var mr = new MediaRecorder(stream);
+          appState.mediaRecorder = mr;
+          mr.ondataavailable = function(e) {
+            if (e.data && e.data.size > 0) chunks.push(e.data);
+          };
+          mr.onstart = function() {
+            setMicUiState(true);
+            showVoiceStatusBanner("🎙️ 正在透過雲端 AI 錄音中（請說普通話，說完點擊紅色按鈕即可轉文字）...", false);
+          };
+          mr.onstop = function() {
+            stream.getTracks().forEach(function(t) { t.stop(); });
+            setMicUiState(false);
+            if (!chunks.length) return;
+            var blob = new Blob(chunks, { type: mr.mimeType || "audio/mp4" });
+            transcribeBlobViaCloud(blob, mr.mimeType || "audio/mp4");
+          };
+          mr.start();
+        }).catch(function() {
+          showIframeOrPermissionFallbackGuide(reasonMsg);
+        });
+      } else {
+        showIframeOrPermissionFallbackGuide(reasonMsg);
+      }
+    }
+
+    function transcribeBlobViaCloud(blob, mimeType) {
+      showVoiceStatusBanner("⏳ 正在將普通話錄音轉為繁體中文文字...", false);
+      var reader = new FileReader();
+      reader.onloadend = function() {
+        var base64Data = String(reader.result || "").split(",")[1] || "";
+        if (!base64Data) return;
+        var apiKey = (appState.cloudConfig.apiKey || "").trim();
+        var webappUrl = (appState.cloudConfig.webappUrl || "").trim();
+
+        if (apiKey) {
+          var gUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + encodeURIComponent(apiKey);
+          fetch(gUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{
+                role: "user",
+                parts: [
+                  { inlineData: { mimeType: mimeType, data: base64Data } },
+                  { text: "請將這段普通話語音精準轉錄為繁體中文文字。只回傳 JSON: {\"transcript\":\"...\"}" }
+                ]
+              }],
+              generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
+            })
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            var parsed = JSON.parse(d.candidates[0].content.parts[0].text);
+            if (parsed && parsed.transcript) {
+              var trad = normalizeToTraditional(parsed.transcript);
+              var box = document.getElementById("student-input");
+              if (box) box.value = appState.micBaseText ? (appState.micBaseText + " " + trad) : trad;
+              showVoiceStatusBanner("✅ 雲端普通話辨識完成：「" + trad + "」", false);
+            }
+          }).catch(function() {
+            showIframeOrPermissionFallbackGuide("雲端語音轉錄連線失敗");
+          });
+        } else if (webappUrl) {
+          fetch(webappUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: "transcribe_audio",
+              audioBase64: base64Data,
+              mimeType: mimeType,
+              gcpProjectId: appState.cloudConfig.gcpProjectId,
+              gcpLocation: appState.cloudConfig.gcpRegion
+            })
+          })
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d && d.transcript) {
+              var trad = normalizeToTraditional(d.transcript);
+              var box = document.getElementById("student-input");
+              if (box) box.value = appState.micBaseText ? (appState.micBaseText + " " + trad) : trad;
+              showVoiceStatusBanner("✅ 雲端普通話辨識完成：「" + trad + "」", false);
+            }
+          }).catch(function() {
+            showIframeOrPermissionFallbackGuide("Apps Script 語音轉錄需在獨立網頁開啟");
+          });
+        }
+      };
+      reader.readAsDataURL(blob);
+    }
+
+    function showIframeOrPermissionFallbackGuide(reasonMsg) {
+      var inIframe = false;
+      try {
+        inIframe = (window.self !== window.top);
+      } catch (e) {
+        inIframe = true;
+      }
+      var inputEl = document.getElementById("student-input");
+      if (inputEl) inputEl.focus();
+
+      if (inIframe) {
+        showVoiceStatusBanner(
+          "💡 偵測到目前在預覽視窗 (Canvas) 內開啟，預覽框預設會阻擋網頁麥克風 (" + reasonMsg + ")。我們已為您聚焦下方輸入框：在 iPad/Mac 上可直接按鍵盤的「🎙️ 聽寫」鍵說話，或在 Safari 獨立分頁開啟 index.html！",
+          true
+        );
+      } else {
+        showVoiceStatusBanner(
+          "💡 網頁麥克風未獲授權或受限 (" + reasonMsg + ")。我們已自動聚焦下方輸入框：請直接點選 iPad 螢幕鍵盤上的「🎙️ 聽寫」麥克風圖示說普通話（會自動轉為繁體中文），或在 Safari 網址列左側允許麥克風權限！",
+          true
+        );
       }
     }
 
