@@ -536,12 +536,21 @@
           <button id="btn-generate-cloud-level" type="button" onclick="requestCloudNewLevel()" class="touch-btn bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl">
             ✨ 自動生成新關卡並存入雲端
           </button>
+          <button id="btn-test-log-session" type="button" onclick="addMockTestSession()" class="touch-btn bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 font-bold text-xs sm:text-sm px-3.5 py-2.5 rounded-xl" title="立即新增一筆測試練習紀錄並同步至 Google Sheet">
+            🧪 測試新增一筆練習紀錄
+          </button>
           <button id="btn-export-csv" type="button" onclick="exportLogsCsv()" class="touch-btn bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-slate-300">
             📥 匯出進度表格
           </button>
           <button id="btn-reset-logs" type="button" onclick="resetLocalProgress()" class="touch-btn bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs sm:text-sm px-3 py-2.5 rounded-xl border border-rose-200 ml-auto">
             🗑️ 重設本機紀錄
           </button>
+        </div>
+
+        <!-- In-Modal Cloud Action Status Banner -->
+        <div id="modal-cloud-status" class="hidden rounded-xl border border-indigo-200 bg-indigo-50/90 p-3 text-xs sm:text-sm font-bold text-indigo-950 flex items-center justify-between">
+          <span id="modal-cloud-status-text">⏳ 正在處理中...</span>
+          <button type="button" onclick="document.getElementById('modal-cloud-status').classList.add('hidden')" class="touch-btn text-xs font-black text-indigo-700 hover:text-indigo-950 px-1">✕</button>
         </div>
 
         <!-- Hidden Parent-Only Assessment Table -->
@@ -586,7 +595,7 @@
     {
       "levelId": "L01",
       "order": 1,
-      "date": "2026-10-30",
+      "date": "2026-10-29",
       "title": "第一關：天平上的神祕彩球（五球找異）",
       "topicCategory": "天平平衡與邏輯推理",
       "topicBadge": "⚖️ 盃賽直通車 第十七頁 • 天平推理與數量比較",
@@ -683,7 +692,7 @@
     {
       "levelId": "L02",
       "order": 2,
-      "date": "2026-10-30",
+      "date": "2026-10-29",
       "title": "第二關：八球尋蹤：找出兩個輕球",
       "topicCategory": "天平平衡與邏輯推理",
       "topicBadge": "⚖️ 盃賽直通車 第十七頁 • 多重條件排除與數量比較",
@@ -780,7 +789,7 @@
     {
       "levelId": "L03",
       "order": 3,
-      "date": "2026-10-30",
+      "date": "2026-10-29",
       "title": "第三關：公路兩側的植樹祕密（兩端都不種）",
       "topicCategory": "植樹與週期間隔問題",
       "topicBadge": "🌲 盃賽直通車 第三十一頁 • 植樹間隔與數量比較",
@@ -867,7 +876,7 @@
     {
       "levelId": "L04",
       "order": 4,
-      "date": "2026-10-30",
+      "date": "2026-10-29",
       "title": "第四關：古老時鐘的敲鐘陷阱（週期與間隔）",
       "topicCategory": "植樹與週期間隔問題",
       "topicBadge": "🕰️ 盃賽直通車 第三十一頁 • 敲鐘時間與倍數陷阱",
@@ -957,7 +966,7 @@
     {
       "levelId": "L05",
       "order": 5,
-      "date": "2026-10-30",
+      "date": "2026-10-29",
       "title": "第五關：公園一筆畫與奇點偵探",
       "topicCategory": "圖論一筆畫與拓撲",
       "topicBadge": "✏️ 九月月考複習 第三十六頁 • 一筆畫奇偶點與邏輯",
@@ -1046,7 +1055,7 @@
     {
       "levelId": "L06",
       "order": 6,
-      "date": "2026-10-30",
+      "date": "2026-10-29",
       "title": "第六關：三角形與長方形的組合規律",
       "topicCategory": "幾何計數與組合規律",
       "topicBadge": "📐 九月月考複習 第三十七頁 • 圖形有序計數與比較",
@@ -1128,7 +1137,7 @@
     {
       "levelId": "L07",
       "order": 7,
-      "date": "2026-10-30",
+      "date": "2026-10-29",
       "title": "第七關：菜場番茄與蘋果分配（逆向和差）",
       "topicCategory": "餘數與逆向和差問題",
       "topicBadge": "🍅 拓展練習 第十九頁 • 逆向還原與差值比較",
@@ -1213,7 +1222,7 @@
     {
       "levelId": "L08",
       "order": 8,
-      "date": "2026-10-30",
+      "date": "2026-10-29",
       "title": "第八關：農場動物與摺星星倍數挑戰",
       "topicCategory": "倍數關係與逆向差倍",
       "topicBadge": "⭐ 溫習題 第四十二至四十三頁 • 順逆倍數線段圖與比較",
@@ -1293,6 +1302,173 @@
             "十八",
             "二",
             "兩"
+          ]
+        }
+      ]
+    },
+    {
+      "levelId": "L09",
+      "order": 9,
+      "date": "2026-10-30",
+      "title": "第九關：超市購物：薯片與可樂的總價挑戰",
+      "topicCategory": "兩步乘加應用與數量比較",
+      "topicBadge": "🛒 溫習題 第四十二頁 • 分步乘加與差值比較",
+      "mode": "socratic",
+      "emeraldReward": 20,
+      "coachName": "貓頭鷹教練",
+      "coachAvatar": "🦉",
+      "visualType": "apples_tomatoes",
+      "promptScenario": "小可在超市看到薯片每包八元，可樂每瓶七元。她買了三包薯片和五瓶可樂，請問小可一共花了多少錢？",
+      "ctyComparison": {
+        "colA": "買五瓶可樂花的錢（元）",
+        "colB": "買三包薯片花的錢加十元",
+        "correctChoice": "甲",
+        "explanation": "三包薯片花了八乘以三等於二十四元；五瓶可樂花了七乘以五等於三十五元，總共花了二十四加三十五等於五十九元。甲欄（五瓶可樂三十五元）對比乙欄（二十四加十等於三十四元），三十五大於三十四，所以甲欄較大！"
+      },
+      "bonusChallenge": {
+        "question": "🎯 進階挑戰（加十顆寶石）：如果小可帶了一張一百元紙鈔去付這五十九元，收銀員應該找回她多少元？",
+        "chips": [
+          "找回四十一元，因為一百減五十九等於四十一",
+          "找回四十九元",
+          "找回五十元"
+        ],
+        "expectedKeywords": [
+          "41",
+          "四十一"
+        ]
+      },
+      "steps": [
+        {
+          "stepIndex": 1,
+          "role": "第一步（共三步）：分別算出薯片與可樂的價錢",
+          "coachQuestion": "🗺️ 全題探索藍圖：我們先分別算出三包薯片和五瓶可樂各多少元，再加起來算出總價，最後比較甲欄與乙欄！\n\n👉 第一步：薯片每包八元，買三包要多少元？可樂每瓶七元，買五瓶要多少元？",
+          "hint": "🗺️ 整體思路：單價乘以數量 👉 第一步提示：先算八乘以三，再算七乘以五。",
+          "thoughtChips": [
+            "三包薯片是二十四元（八乘以三），五瓶可樂是三十五元（七乘以五）",
+            "薯片二十四元，可樂三十五元"
+          ],
+          "expectedKeywords": [
+            "24",
+            "35",
+            "二十四",
+            "三十五"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "role": "第二步（共三步）：算出總共花了多少錢",
+          "coachQuestion": "👉 第二步：完全正確！三包薯片二十四元，五瓶可樂三十五元。把這兩筆錢合起來，小可一共花了多少元？",
+          "hint": "提示：計算二十四加三十五等於多少？",
+          "thoughtChips": [
+            "一共花了五十九元，因為二十四加三十五等於五十九",
+            "二十四加三十五等於五十九元"
+          ],
+          "expectedKeywords": [
+            "59",
+            "五十九"
+          ]
+        },
+        {
+          "stepIndex": 3,
+          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
+          "coachQuestion": "👉 第三步：太棒了，總共是五十九元！現在請看左邊的數量比較：\n【甲欄】買五瓶可樂花的錢（三十五元） 對比 【乙欄】買三包薯片花的錢加十元（二十四加十）。\n請問哪一欄比較大？",
+          "hint": "提示：甲欄是三十五元，乙欄是二十四加十等於三十四元。",
+          "thoughtChips": [
+            "甲欄較大，因為三十五元大於三十四元",
+            "五瓶可樂三十五元比三十四元多一元，所以甲欄較大"
+          ],
+          "expectedKeywords": [
+            "甲",
+            "左",
+            "35",
+            "34",
+            "三十五",
+            "三十四"
+          ]
+        }
+      ]
+    },
+    {
+      "levelId": "L10",
+      "order": 10,
+      "date": "2026-10-30",
+      "title": "第十關：冰箱裡的飲料：果汁與牛奶的逆向倍數",
+      "topicCategory": "逆向倍數與和倍問題",
+      "topicBadge": "🥛 溫習題 第四十三頁 • 已知多倍求一倍與比較",
+      "mode": "socratic",
+      "emeraldReward": 25,
+      "coachName": "貓頭鷹教練",
+      "coachAvatar": "🦉",
+      "visualType": "farm_stars",
+      "promptScenario": "冰箱裡有一些牛奶和果汁，果汁有三十六瓶，而且果汁的數量剛好是牛奶數量的四倍。請問牛奶有多少瓶？牛奶和果汁一共有多少瓶？",
+      "ctyComparison": {
+        "colA": "冰箱裡牛奶的瓶數",
+        "colB": "十瓶",
+        "correctChoice": "乙",
+        "explanation": "果汁有三十六瓶，是牛奶的四倍，求一倍量的牛奶用除法：三十六除以四等於九瓶牛奶！甲欄（九瓶）小於乙欄（十瓶），所以乙欄較大。"
+      },
+      "bonusChallenge": {
+        "question": "🎯 進階挑戰（加十顆寶石）：果汁有三十六瓶，牛奶有九瓶，請問果汁比牛奶多幾瓶？（提示：四倍比一倍多了三倍喔！）",
+        "chips": [
+          "多二十七瓶，因為三十六減九等於二十七（也就是九乘以三）",
+          "多二十五瓶",
+          "多三十瓶"
+        ],
+        "expectedKeywords": [
+          "27",
+          "二十七"
+        ]
+      },
+      "steps": [
+        {
+          "stepIndex": 1,
+          "role": "第一步（共三步）：分清楚誰是一倍、誰是四倍",
+          "coachQuestion": "🗺️ 全題探索藍圖：我們先判斷牛奶比較多還是果汁比較多，再用除法算出牛奶的瓶數，最後比較甲欄與乙欄！\n\n👉 第一步：題目說「果汁有三十六瓶，是牛奶數量的四倍」。如果把牛奶看成「一份」，那麼三十六瓶果汁相當於幾份？應該用乘法還是除法來算牛奶？",
+          "hint": "🗺️ 整體思路：已知四份求一份 👉 第一步提示：三十六瓶分成四等份，求其中一份用除法！",
+          "thoughtChips": [
+            "果汁是四份，求一份的牛奶應該用除法（三十六除以四）",
+            "牛奶比較少，把三十六平均分成四份"
+          ],
+          "expectedKeywords": [
+            "除",
+            "4",
+            "四",
+            "少",
+            "一份"
+          ]
+        },
+        {
+          "stepIndex": 2,
+          "role": "第二步（共三步）：算出牛奶瓶數與飲料總數",
+          "coachQuestion": "👉 第二步：思路非常清晰！用三十六除以四，算出牛奶有幾瓶？如果把牛奶和三十六瓶果汁加起來，冰箱裡一共有幾瓶飲料？",
+          "hint": "提示：三十六除以四等於九瓶；九加三十六等於四十五瓶。",
+          "thoughtChips": [
+            "牛奶有九瓶（三十六除以四等於九），合起來一共有四十五瓶",
+            "牛奶九瓶，總共四十五瓶"
+          ],
+          "expectedKeywords": [
+            "9",
+            "九",
+            "45",
+            "四十五"
+          ]
+        },
+        {
+          "stepIndex": 3,
+          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
+          "coachQuestion": "👉 第三步：太出色了，牛奶有九瓶！現在請看數量比較：\n【甲欄】冰箱裡牛奶的瓶數（九瓶） 對比 【乙欄】十瓶。\n請問哪一欄比較大？",
+          "hint": "提示：比較九瓶與十瓶的大小。",
+          "thoughtChips": [
+            "乙欄較大，因為牛奶是九瓶，小於乙欄的十瓶",
+            "九小於十，所以乙欄較大"
+          ],
+          "expectedKeywords": [
+            "乙",
+            "右",
+            "9",
+            "10",
+            "九",
+            "十"
           ]
         }
       ]
@@ -1412,7 +1588,9 @@
       // Normalize common Putonghua STT math homophones into exact Traditional Chinese terms
       out = out
         .replace(/假欄|假藍|甲藍|甲男/g, "甲欄")
-        .replace(/以欄|乙藍|以藍|乙男/g, "乙欄")
+        .replace(/以欄|乙藍|以藍|乙男|姐了|姐欄/g, "乙欄")
+        .replace(/你二五|一二五/g, "一號、二號、五號")
+        .replace(/比較新|比較清/g, "比較輕")
         .replace(/起點|基點|極點/g, "奇點")
         .replace(/1號/g, "一號").replace(/2號/g, "二號").replace(/3號/g, "三號")
         .replace(/4號/g, "四號").replace(/5號/g, "五號").replace(/6號/g, "六號")
@@ -2815,40 +2993,130 @@
       document.body.appendChild(scriptEl);
     }
 
+    function showModalStatus(msg, isError) {
+      var box = document.getElementById("modal-cloud-status");
+      var txt = document.getElementById("modal-cloud-status-text");
+      if (!box || !txt) return;
+      txt.textContent = msg;
+      box.className = isError
+        ? "rounded-xl border border-rose-300 bg-rose-50 p-3 text-xs sm:text-sm font-bold text-rose-950 flex items-center justify-between"
+        : "rounded-xl border border-indigo-200 bg-indigo-50/90 p-3 text-xs sm:text-sm font-bold text-indigo-950 flex items-center justify-between";
+      box.classList.remove("hidden");
+    }
+
+    function addMockTestSession() {
+      var curM = getCurrentMission();
+      var testLog = {
+        timestamp: new Date().toISOString().replace("T", " ").slice(0, 19),
+        missionId: curM ? curM.levelId : "L01",
+        missionTitle: curM ? curM.title : "第一關：天平上的神祕彩球",
+        topicCategory: curM ? curM.topicCategory : "天平平衡與邏輯推理",
+        promptScenario: curM ? curM.promptScenario : "五球稱重",
+        mode: "socratic",
+        stepsCompleted: 3,
+        ctyChoice: "乙",
+        durationSec: 45,
+        emeraldsEarned: 20,
+        brilliantCount: 2,
+        greatCount: 1,
+        quickFixCount: 0,
+        ctyNumberSense10: 9.5,
+        ctyLogic10: 9.5,
+        ctyPattern10: 9.0,
+        ctyTotal30: 28.0,
+        scatBand: "資優高階榮譽 (前百分之五)",
+        reasoningTranscript: "[家長手動測試紀錄] 測試 Vertex AI 與 Google Apps Script 同步成功！",
+        coachNotes: "家長於設定面板手動新增一筆連線測試紀錄。"
+      };
+      appState.logs.unshift(testLog);
+      safeSetStorage("logs", JSON.stringify(appState.logs));
+      renderParentLogsTable();
+      showModalStatus("✅ 已在下方表格新增一筆測試紀錄！正在同步至 Google Drive 試算表...", false);
+      sendGameReviewAndLogToCloud(testLog);
+      showToast("已新增測試練習紀錄！", "🧪");
+    }
+
     function requestCloudNewLevel() {
-      var url = (document.getElementById("cfg-webapp-url").value || appState.cloudConfig.webappUrl || "").trim();
+      // Always sync live input values directly from the input fields
+      appState.cloudConfig.webappUrl = (document.getElementById("cfg-webapp-url").value || appState.cloudConfig.webappUrl || "").trim();
+      appState.cloudConfig.gcpProjectId = (document.getElementById("cfg-gcp-project").value || appState.cloudConfig.gcpProjectId || "").trim();
+      appState.cloudConfig.gcpRegion = (document.getElementById("cfg-gcp-region").value || appState.cloudConfig.gcpRegion || "us-central1").trim();
+      appState.cloudConfig.apiKey = (document.getElementById("cfg-api-key").value || appState.cloudConfig.apiKey || "").trim();
+      safeSetStorage("cloudConfig", JSON.stringify(appState.cloudConfig));
+
+      var url = appState.cloudConfig.webappUrl;
       if (!url) {
-        showToast("請先儲存雲端網頁應用程式網址！", "⚠️");
+        showModalStatus("⚠️ 請先在上方第一欄輸入 Google Apps Script 網頁應用程式網址！", true);
         return;
       }
-      showToast("正在請雲端生成新關卡並存入雲端硬碟...", "✨");
+      if (!appState.cloudConfig.gcpProjectId && !appState.cloudConfig.apiKey) {
+        showModalStatus("⚠️ 請在「選項一」輸入 Google Cloud Project ID（如 milo-writing-crafter）！", true);
+        return;
+      }
+
+      var genBtn = document.getElementById("btn-generate-cloud-level");
+      if (genBtn) genBtn.disabled = true;
+
+      showModalStatus("⏳ 正在連線 Vertex AI 撰寫全新的第九關（包含情境、圖解與三步蘇格拉底引導，約需 10 到 15 秒）...", false);
+
       var curMission = getCurrentMission();
       var cbName = "miloGenCb_" + Date.now();
       var scriptEl = document.createElement("script");
+      var schemaHint = " (請直接回傳單一頂層 JSON 物件，不要外包 mission，必須有頂層欄位：title, topicCategory, topicBadge, visualType, promptScenario, ctyComparison:{colA,colB,correctChoice,explanation}, bonusChallenge:{question,chips,expectedKeywords}, steps:[{stepIndex,role,coachQuestion,hint,thoughtChips,expectedKeywords}]，全程使用純繁體中文且不含英文字母)";
       var payload = {
-        missionId: curMission ? curMission.levelId : "L08",
-        missionTitle: curMission ? curMission.title : "",
+        missionId: "L" + appState.missions.length,
+        missionTitle: (curMission ? curMission.title : "第十關") + schemaHint,
         gcpProjectId: appState.cloudConfig.gcpProjectId,
         gcpLocation: appState.cloudConfig.gcpRegion,
         apiKey: appState.cloudConfig.apiKey
       };
-      window[cbName] = function(resp) {
+
+      var finished = false;
+      var timeoutTimer = setTimeout(function() {
+        if (finished) return;
+        finished = true;
+        if (genBtn) genBtn.disabled = false;
+        cleanup();
+        showModalStatus("⚠️ 雲端連線逾時，請確認 Google Apps Script 部署權限為「Anyone」且已完成授權。", true);
+      }, 35000);
+
+      function cleanup() {
         try {
           delete window[cbName];
           if (scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl);
         } catch (e) {}
+      }
+
+      window[cbName] = function(resp) {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timeoutTimer);
+        if (genBtn) genBtn.disabled = false;
+        cleanup();
+
         if (resp && resp.status === "ok" && resp.newLevel) {
+          resp.newLevel.date = new Date().toISOString().slice(0, 19);
           appState.missions.unshift(resp.newLevel);
           populateLevelDropdown();
           loadLevel(0);
-          closeParentModal();
+          showModalStatus("🎉 成功生成新題目並存入雲端硬碟！【" + resp.newLevel.title + "】已自動切換至最新關卡！", false);
           showToast("已生成新關卡：" + resp.newLevel.title, "🎉");
         } else {
-          showToast("生成新關卡需先設定專案代號或金鑰", "ℹ️");
+          var errMsg = (resp && resp.error) ? resp.error : "雲端未回傳新關卡資料";
+          showModalStatus("⚠️ 生成失敗：" + errMsg, true);
         }
       };
+
       scriptEl.src = url + "?action=generate_new_level&callback=" + encodeURIComponent(cbName) +
                      "&payload=" + encodeURIComponent(JSON.stringify(payload));
+      scriptEl.onerror = function() {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timeoutTimer);
+        if (genBtn) genBtn.disabled = false;
+        cleanup();
+        showModalStatus("⚠️ 無法連線至 Apps Script。請確認 Web App URL 正確且部署為「Anyone」。", true);
+      };
       document.body.appendChild(scriptEl);
     }
 
