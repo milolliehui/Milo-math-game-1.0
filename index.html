@@ -197,46 +197,56 @@
         </div>
       </div>
 
-      <!-- Quantitative Comparison Card (甲欄 vs 乙欄 — Zero English Letters) -->
+      <!-- Quantitative Comparison Card (Concise Math Symbols + Direct Submit) -->
       <div class="app-card bg-white rounded-2xl border-2 border-indigo-200 p-4 sm:p-5 shadow-sm">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-2">
-            <span class="bg-indigo-600 text-white text-xs font-black px-2 py-0.5 rounded">資優思維</span>
-            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">甲欄與乙欄數量比較挑戰</h3>
+            <span class="bg-indigo-600 text-white text-xs font-black px-2 py-0.5 rounded">大小比較</span>
+            <h3 class="text-sm sm:text-base font-extrabold text-slate-900">甲欄 vs 乙欄</h3>
           </div>
-          <span id="cty-status-pill" class="text-xs font-bold text-slate-500">可隨時點選</span>
+          <span id="cty-status-pill" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full">點選 ＞ ＜ ＝</span>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 mb-3">
-          <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3 text-center">
-            <div class="text-xs font-extrabold text-blue-700 tracking-wider mb-1">👈 甲欄（左邊）</div>
-            <div id="cty-col-a" class="text-sm sm:text-base font-black text-slate-900"></div>
+        <div class="flex items-stretch gap-2 mb-3">
+          <div class="flex-1 bg-blue-50/70 border border-blue-200 rounded-xl p-3 flex flex-col justify-center text-center">
+            <div class="text-xs font-extrabold text-blue-700 mb-1">甲欄</div>
+            <div id="cty-col-a" class="text-base sm:text-lg font-black text-slate-900 leading-snug"></div>
           </div>
-          <div class="bg-purple-50/70 border border-purple-200 rounded-xl p-3 text-center">
-            <div class="text-xs font-extrabold text-purple-700 tracking-wider mb-1">👉 乙欄（右邊）</div>
-            <div id="cty-col-b" class="text-sm sm:text-base font-black text-slate-900"></div>
+          <div class="flex items-center justify-center px-1">
+            <span id="cty-live-sign" class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-800 font-black text-2xl flex items-center justify-center border-2 border-indigo-300 shadow-sm">？</span>
+          </div>
+          <div class="flex-1 bg-purple-50/70 border border-purple-200 rounded-xl p-3 flex flex-col justify-center text-center">
+            <div class="text-xs font-extrabold text-purple-700 mb-1">乙欄</div>
+            <div id="cty-col-b" class="text-base sm:text-lg font-black text-slate-900 leading-snug"></div>
           </div>
         </div>
 
-        <!-- 4 One-Tap Pure Chinese Choice Buttons -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          <button id="cty-btn-甲" type="button" onclick="selectCtyChoice('甲')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-800 font-bold text-xs sm:text-sm py-2.5 px-2 rounded-xl flex flex-col items-center gap-0.5">
-            <span class="text-base">👈</span>
-            <span>甲欄較大</span>
+        <!-- 4 One-Tap Mathematical Symbol Buttons (＞, ＜, ＝, ？) -->
+        <div class="grid grid-cols-4 gap-2 mb-3">
+          <button id="cty-btn-甲" type="button" onclick="selectCtyChoice('甲')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-900 font-black py-2.5 px-2 rounded-xl flex flex-col items-center justify-center">
+            <span class="text-2xl sm:text-3xl leading-none text-indigo-700">＞</span>
+            <span class="text-[11px] font-bold text-slate-500 mt-1">甲 ＞ 乙</span>
           </button>
-          <button id="cty-btn-乙" type="button" onclick="selectCtyChoice('乙')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-800 font-bold text-xs sm:text-sm py-2.5 px-2 rounded-xl flex flex-col items-center gap-0.5">
-            <span class="text-base">👉</span>
-            <span>乙欄較大</span>
+          <button id="cty-btn-乙" type="button" onclick="selectCtyChoice('乙')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-900 font-black py-2.5 px-2 rounded-xl flex flex-col items-center justify-center">
+            <span class="text-2xl sm:text-3xl leading-none text-indigo-700">＜</span>
+            <span class="text-[11px] font-bold text-slate-500 mt-1">甲 ＜ 乙</span>
           </button>
-          <button id="cty-btn-相等" type="button" onclick="selectCtyChoice('相等')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-800 font-bold text-xs sm:text-sm py-2.5 px-2 rounded-xl flex flex-col items-center gap-0.5">
-            <span class="text-base">⚖️</span>
-            <span>兩欄相等</span>
+          <button id="cty-btn-相等" type="button" onclick="selectCtyChoice('相等')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-900 font-black py-2.5 px-2 rounded-xl flex flex-col items-center justify-center">
+            <span class="text-2xl sm:text-3xl leading-none text-indigo-700">＝</span>
+            <span class="text-[11px] font-bold text-slate-500 mt-1">甲 ＝ 乙</span>
           </button>
-          <button id="cty-btn-不足" type="button" onclick="selectCtyChoice('不足')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-800 font-bold text-xs sm:text-sm py-2.5 px-2 rounded-xl flex flex-col items-center gap-0.5">
-            <span class="text-base">❓</span>
-            <span>條件不足</span>
+          <button id="cty-btn-不足" type="button" onclick="selectCtyChoice('不足')" class="cty-choice-btn touch-btn bg-slate-50 hover:bg-slate-100 border-2 border-slate-200 text-slate-900 font-black py-2.5 px-2 rounded-xl flex flex-col items-center justify-center">
+            <span class="text-2xl sm:text-3xl leading-none text-indigo-700">？</span>
+            <span class="text-[11px] font-bold text-slate-500 mt-1">條件不足</span>
           </button>
         </div>
+
+        <!-- Direct Submit Button on the Left (No need to go through right-hand steps if Milo knows the answer!) -->
+        <button id="btn-direct-submit" type="button" onclick="submitDirectAnswer()" class="touch-btn w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm sm:text-base py-3 px-4 rounded-xl shadow flex items-center justify-center gap-2">
+          <span>✅</span>
+          <span>直接提交答案</span>
+        </button>
+        <div id="direct-submit-feedback" class="hidden mt-2 text-xs sm:text-sm font-bold rounded-xl p-2.5 text-center"></div>
       </div>
 
       <!-- Reasoning Steps So Far -->
@@ -366,12 +376,12 @@
               <button type="button" onclick="insertKeypadToken('九')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">九</button>
               <button type="button" onclick="insertKeypadToken('十')" class="touch-btn bg-white border border-slate-300 rounded-lg py-2 font-extrabold text-slate-800 text-sm">十</button>
               <button type="button" onclick="insertKeypadToken('號')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">號</button>
-              <button type="button" onclick="insertKeypadToken('加')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">加</button>
-              <button type="button" onclick="insertKeypadToken('減')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">減</button>
-              <button type="button" onclick="insertKeypadToken('乘以')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">乘</button>
-              <button type="button" onclick="insertKeypadToken('除以')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">除</button>
-              <button type="button" onclick="insertKeypadToken('等於')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">等於</button>
-              <button type="button" onclick="insertKeypadToken('較大')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-extrabold text-indigo-800 text-sm">較大</button>
+              <button type="button" onclick="insertKeypadToken(' ＋ ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-black text-indigo-800 text-base">＋</button>
+              <button type="button" onclick="insertKeypadToken(' － ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-black text-indigo-800 text-base">－</button>
+              <button type="button" onclick="insertKeypadToken(' × ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-black text-indigo-800 text-base">×</button>
+              <button type="button" onclick="insertKeypadToken(' ÷ ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-black text-indigo-800 text-base">÷</button>
+              <button type="button" onclick="insertKeypadToken(' ＝ ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-black text-indigo-800 text-base">＝</button>
+              <button type="button" onclick="insertKeypadToken(' ＞ ')" class="touch-btn bg-indigo-50 border border-indigo-200 rounded-lg py-2 font-black text-indigo-800 text-base">＞</button>
               <button type="button" onclick="backspaceInput()" class="touch-btn bg-rose-50 border border-rose-200 rounded-lg py-2 font-extrabold text-rose-700 text-sm">⌫</button>
             </div>
           </div>
@@ -606,17 +616,17 @@
       "visualType": "balance_5",
       "promptScenario": "有一號、二號、三號、四號、五號共五個彩球，其中四個球的重量完全相等，只有一個球的重量與其他球不同。請觀察下方兩次天平稱重的結果，一步步推理出那個特別的球是幾號！",
       "ctyComparison": {
-        "colA": "異常球（五號球）的重量",
-        "colB": "標準球（三號球）的重量",
+        "colA": "五號球",
+        "colB": "三號球",
         "correctChoice": "乙",
         "explanation": "在兩次天平稱重中，（二號＋三號）比（一號＋五號）重，而且（一號＋四號）比（二號＋五號）重。一號與二號互換位置後，依然是放有五號球的右盤比較輕（翹起來），證明一號、二號、三號、四號重量都相同，只有五號球比標準球輕！因此乙欄（標準球三號）較大。"
       },
       "bonusChallenge": {
         "question": "🎯 進階挑戰（加十顆寶石）：如果每個標準球重十克，而五號球輕兩克，那麼第一次天平左盤（二號加三號）比右盤（一號加五號）重多少克？",
         "chips": [
-          "重兩克，因為二十減十八等於二",
-          "重四克",
-          "重十克"
+          "二克（二十 － 十八 ＝ 二）",
+          "四克",
+          "十克"
         ],
         "expectedKeywords": [
           "2",
@@ -631,10 +641,9 @@
           "coachQuestion": "👉 第一步：請看圖中的兩個天平——左邊第一個是（二號加三號）比（一號加五號）重，第二個是（一號加四號）比（二號加五號）重。請問哪三個球號在兩次稱重中都有上場？",
           "hint": "🗺️ 全題探索藍圖：我們先找出兩次天平都出現的球號，再用「位置交換」鎖定唯一的異常球，最後完成甲欄與乙欄的數量比較！ 🗺️ 整體思路：找共同出現的球號 👉 第一步提示：仔細看兩個天平上的球號，哪三個號碼在第一次和第二次都有出現？",
           "thoughtChips": [
-            "一號、二號、五號三個球兩次都有出現",
-            "三號和四號只出現了一次",
-            "右邊比較輕的盤子裡都有五號球",
-            "一號和二號交換了左右位置"
+            "一號、二號、五號",
+            "三號、四號只出現一次",
+            "五號都在輕盤"
           ],
           "expectedKeywords": [
             "1",
@@ -653,10 +662,9 @@
           "coachQuestion": "👉 第二步：觀察得很仔細！第一次一號在輕盤、二號在重盤；第二次一號和二號交換了位置，結果右盤（二號加五號）還是比較輕！既然只有一個球重量不同，這說明幾號球才是真正特別的球？它是偏輕還是偏重？",
           "hint": "提示：如果一號或二號是異常球，它們交換位置後天平傾斜方向應該會改變；但右盤始終比較輕，因為幾號球一直待在右盤？",
           "thoughtChips": [
-            "五號球是異常球，而且五號球比較輕",
-            "因為五號球兩次都在翹起來的輕盤",
-            "一號、二號、三號、四號四個球重量都相等",
-            "不管跟誰搭配，有五號球的那邊就變輕"
+            "五號球最輕",
+            "五號 ＜ 標準球",
+            "一號 ＝ 二號 ＝ 三號 ＝ 四號"
           ],
           "expectedKeywords": [
             "5",
@@ -667,13 +675,12 @@
         },
         {
           "stepIndex": 3,
-          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
-          "coachQuestion": "👉 第三步：太棒了，我們找出了五號球是唯一的輕球！現在請看左邊的數量比較卡：\n【甲欄】異常球（五號球）的重量 對比 【乙欄】標準球（三號球）的重量。\n請點選「甲欄較大」或「乙欄較大」（或直接用普通話說出哪一欄較大並解釋原因）！",
+          "role": "第三步（共三步）：甲欄與乙欄比較",
+          "coachQuestion": "👉 第三步：比較【甲欄：五號球】與【乙欄：三號球】，請點選 ＞、＜ 或 ＝！",
           "hint": "提示：既然五號球比其他標準球都輕，而三號球是標準球，那麼甲欄（五號球）和乙欄（三號球）誰比較重？",
           "thoughtChips": [
-            "乙欄較大，因為三號是標準球，五號比標準球輕",
-            "五號球小於三號球，所以乙欄的重量大於甲欄",
-            "兩次天平有五號的右盤都翹起來，證明五號最輕"
+            "甲 ＜ 乙",
+            "五號球 ＜ 三號球"
           ],
           "expectedKeywords": [
             "乙",
@@ -684,7 +691,13 @@
             "五",
             "重",
             "輕",
-            "大"
+            "大",
+            "＞",
+            "＜",
+            "＝",
+            ">",
+            "<",
+            "="
           ]
         }
       ]
@@ -703,17 +716,17 @@
       "visualType": "balance_8",
       "promptScenario": "有一號到八號共八個球，其中六個球重量相等，另外兩個球都輕一克。鑫鑫用天平稱了三次（如下圖），請找出那兩個輕球分別是幾號！",
       "ctyComparison": {
-        "colA": "（一號球 ＋ 五號球）的總重量",
-        "colB": "（二號球 ＋ 七號球）的總重量",
+        "colA": "一號球 ＋ 五號球",
+        "colB": "二號球 ＋ 七號球",
         "correctChoice": "乙",
         "explanation": "第一次稱重（一號、二號）比（三號、四號）重，第二次稱重（五號、六號）比（七號、八號）輕，由於總共只有兩個輕球，可知（三號、四號）之中有一個輕球，（五號、六號）之中也有一個輕球，而一號、二號、七號、八號全部是標準球！再看第三次稱重（一號、三號、五號）比（二號、四號、八號）輕，左盤較輕，因此鎖定兩個輕球正是三號與五號！甲欄含有輕球五號，乙欄的二號與七號皆為標準球，故乙欄比甲欄重一克（乙欄較大）。"
       },
       "bonusChallenge": {
         "question": "🎯 進階挑戰（加十顆寶石）：已知三號和五號都比標準球輕一克，如果在天平左盤放（三號加四號），右盤放（五號加六號），天平會怎樣？",
         "chips": [
-          "兩邊平衡，因為每邊都剛好是一個標準球加一個輕球",
-          "左盤比較重",
-          "右盤比較重"
+          "左盤 ＝ 右盤",
+          "左盤 ＞ 右盤",
+          "左盤 ＜ 右盤"
         ],
         "expectedKeywords": [
           "平衡",
@@ -728,9 +741,9 @@
           "coachQuestion": "👉 第一步：請看前兩個天平：第一個天平（三號、四號）那邊翹起來比較輕，第二個天平（五號、六號）那邊也翹起來比較輕。既然總共只有兩個輕球，這告訴我們兩個輕球分別躲在哪裡？",
           "hint": "🗺️ 全題探索藍圖：我們先從前兩個天平找出兩個輕球躲在哪兩個小組，再用第三個天平精準抓出它們的號碼！ 🗺️ 整體思路：分組鎖定範圍 👉 第一步提示：（三號、四號）比（一號、二號）輕，而且（五號、六號）比（七號、八號）輕，說明哪兩組各藏了一個輕球？",
           "thoughtChips": [
-            "三號四號裡面有一個輕球，五號六號裡面也有一個輕球",
-            "一號、二號、七號、八號全部都是正常重量的標準球",
-            "兩個輕球分別藏在三號四號和五號六號這兩組"
+            "三號、四號有一輕球",
+            "五號、六號有一輕球",
+            "一號、二號、七號、八號正常"
           ],
           "expectedKeywords": [
             "3",
@@ -751,9 +764,8 @@
           "coachQuestion": "👉 第二步：推理得太清楚了！（三號、四號）裡有一個輕球，（五號、六號）裡有一個輕球。現在看第三個天平：左盤放了（一號、三號、五號），右盤放了（二號、四號、八號），結果左盤翹起來比較輕！請問那兩個輕球到底是幾號和幾號？",
           "hint": "提示：一號、二號、八號都是正常球。左盤放了三號和五號，右盤放了四號，結果左盤比較輕，說明輕球在左盤！",
           "thoughtChips": [
-            "兩個輕球分別是三號和五號",
-            "因為左盤一號三號五號比較輕，所以三號和五號是輕球",
-            "四號和六號是正常球，三號和五號各輕一克"
+            "三號、五號是輕球",
+            "四號、六號正常"
           ],
           "expectedKeywords": [
             "3",
@@ -764,12 +776,12 @@
         },
         {
           "stepIndex": 3,
-          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
-          "coachQuestion": "👉 第三步：破案成功！三號和五號是輕球（各輕一克），其餘都是正常球。現在請比較：\n【甲欄】（一號球加五號球）的總重量 對比 【乙欄】（二號球加七號球）的總重量。\n請問哪一欄比較重？",
+          "role": "第三步（共三步）：甲欄與乙欄比較",
+          "coachQuestion": "👉 第三步：比較【甲欄：一號球 ＋ 五號球】與【乙欄：二號球 ＋ 七號球】，請點選 ＞、＜ 或 ＝！",
           "hint": "提示：一號、二號、七號都是正常球，只有五號是輕球！",
           "thoughtChips": [
-            "乙欄較大，因為五號是輕球，二號和七號都是正常球",
-            "甲欄少了一克，所以乙欄比甲欄重一克"
+            "甲 ＜ 乙",
+            "一號 ＋ 五號 ＜ 二號 ＋ 七號"
           ],
           "expectedKeywords": [
             "乙",
@@ -781,7 +793,13 @@
             "七",
             "五",
             "輕",
-            "重"
+            "重",
+            "＞",
+            "＜",
+            "＝",
+            ">",
+            "<",
+            "="
           ]
         }
       ]
@@ -800,7 +818,7 @@
       "visualType": "trees_road",
       "promptScenario": "在一條長六十三米的公路兩側種樹，兩端都不種，一共種了十六棵樹，相鄰兩棵樹之間的距離都相等。請問每隔多少米種一棵樹？",
       "ctyComparison": {
-        "colA": "相鄰兩棵樹之間的距離（米）",
+        "colA": "兩樹間距",
         "colB": "八米",
         "correctChoice": "乙",
         "explanation": "公路兩側共種十六棵樹，單側種十六除以二等於八棵樹。因為「兩端都不種」，間隔數等於棵數加一，即八加一等於九個間隔。每個間隔長六十三除以九等於七米。甲欄（七米）小於乙欄（八米），所以乙欄較大！"
@@ -808,9 +826,9 @@
       "bonusChallenge": {
         "question": "🎯 進階挑戰（加十顆寶石）：如果改成「兩端都種樹」，同樣每隔七米種一棵，六十三米長的公路「單側」需要種幾棵樹？",
         "chips": [
-          "十棵樹，因為九個間隔加一等於十",
-          "九棵樹",
-          "八棵樹"
+          "十棵（九 ＋ 一 ＝ 十）",
+          "九棵",
+          "八棵"
         ],
         "expectedKeywords": [
           "10",
@@ -824,8 +842,8 @@
           "coachQuestion": "👉 第一步：題目有一個小陷阱——它說公路「兩側」一共種了十六棵樹。那麼單看馬路的「其中一側」，種了多少棵樹呢？",
           "hint": "🗺️ 全題探索藍圖：我們先算出公路「一邊」種了幾棵樹，再找出「兩端都不種」時棵數和間隔數的關係，最後算出距離並比較大小！ 🗺️ 整體思路：雙側轉單側 👉 第一步提示：把十六棵樹平均分到馬路左、右兩邊，一邊有幾棵？",
           "thoughtChips": [
-            "單側種了八棵樹，因為十六除以二等於八",
-            "馬路兩邊對稱，每邊各有八棵樹"
+            "十六 ÷ 二 ＝ 八棵",
+            "單側八棵"
           ],
           "expectedKeywords": [
             "8",
@@ -840,9 +858,8 @@
           "coachQuestion": "👉 第二步：沒錯，單側有八棵樹！現在想一想：因為公路「兩端都不種樹」，就像在繩子中間剪一刀會分成兩段一樣，在路中間種八棵樹，會把六十三米長的公路分成幾個相等的「間隔」？每個間隔是幾米？",
           "hint": "提示：兩端都不種時，間隔數等於棵數加一。算出間隔數後，用六十三米除以間隔數！",
           "thoughtChips": [
-            "有九個間隔（八加一等於九），每個間隔六十三除以九等於七米",
-            "兩端都不種，間隔數比棵數多一，所以是九個間隔",
-            "每隔七米種一棵樹"
+            "八 ＋ 一 ＝ 九個間隔",
+            "六十三 ÷ 九 ＝ 七米"
           ],
           "expectedKeywords": [
             "9",
@@ -853,12 +870,12 @@
         },
         {
           "stepIndex": 3,
-          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
-          "coachQuestion": "👉 第三步：太精彩了，每隔七米種一棵！現在請看數量比較：\n【甲欄】相鄰兩棵樹之間的距離（七米） 對比 【乙欄】八米。\n請問哪一欄比較大？如果有人忘記「加一」直接用六十三除以八，他會踩進什麼陷阱？",
+          "role": "第三步（共三步）：甲欄與乙欄比較",
+          "coachQuestion": "👉 第三步：比較【甲欄：兩樹間距（七米）】與【乙欄：八米】，請點選 ＞、＜ 或 ＝！",
           "hint": "提示：比較七米和八米的大小，並說說為什麼間隔數是九而不是八。",
           "thoughtChips": [
-            "乙欄較大，因為甲欄是七米，小於八米",
-            "如果直接除以八棵樹就錯了，因為兩端不種有九個間隔"
+            "甲 ＜ 乙",
+            "七米 ＜ 八米"
           ],
           "expectedKeywords": [
             "乙",
@@ -868,7 +885,13 @@
             "9",
             "七",
             "八",
-            "九"
+            "九",
+            "＞",
+            "＜",
+            "＝",
+            ">",
+            "<",
+            "="
           ]
         }
       ]
@@ -887,15 +910,15 @@
       "visualType": "clock_chimes",
       "promptScenario": "有一種時鐘，三點鐘敲三下需要六秒鐘。那麼到了六點鐘，敲六下需要多少秒？",
       "ctyComparison": {
-        "colA": "六點鐘敲六下所需的秒數",
-        "colB": "十二秒（即三點敲鐘時間的兩倍）",
+        "colA": "敲六下秒數",
+        "colB": "十二秒",
         "correctChoice": "甲",
         "explanation": "敲三下之間只有三減一等於兩個時間間隔，耗時六秒，代表每個間隔六除以二等於三秒。敲六下有六減一等於五個時間間隔，因此需要五乘以三等於十五秒！甲欄（十五秒）大於乙欄（十二秒），所以甲欄較大。"
       },
       "bonusChallenge": {
         "question": "🎯 進階挑戰（加十顆寶石）：按照同樣的規律（每個間隔三秒），到了十點鐘敲十下，一共需要多少秒？",
         "chips": [
-          "二十七秒，因為九個間隔乘以三秒等於二十七",
+          "二十七秒（九 × 三 ＝ 二十七）",
           "三十秒",
           "二十四秒"
         ],
@@ -913,8 +936,8 @@
           "coachQuestion": "👉 第一步：當時鐘敲三下「噹、噹、噹」時，從第一聲到第三聲之間，有幾個「等待間隔」？既然總共花了六秒，每個間隔是幾秒？",
           "hint": "🗺️ 全題探索藍圖：我們先算出「敲三下」中間隔了幾段等待時間，算出每段幾秒，再推算「敲六下」真正需要幾秒！ 🗺️ 整體思路：把敲鐘看成植樹問題 👉 第一步提示：三聲鐘響就像三棵樹，中間有幾個空隙？",
           "thoughtChips": [
-            "敲三下有兩個間隔（三減一等於二），每個間隔是六除以二等於三秒",
-            "中間有兩段等待時間，每段三秒"
+            "三 － 一 ＝ 二個間隔",
+            "六 ÷ 二 ＝ 三秒"
           ],
           "expectedKeywords": [
             "2",
@@ -930,8 +953,8 @@
           "coachQuestion": "👉 第二步：完全正確，每個間隔是三秒！那麼到了六點鐘要敲六下，從第一聲到第六聲之間一共有幾個間隔？總共需要多少秒？",
           "hint": "提示：敲六下的間隔數等於六減一。再用間隔數乘以三秒！",
           "thoughtChips": [
-            "敲六下有五個間隔（六減一等於五），總共需要五乘以三等於十五秒",
-            "五個間隔乘以三秒等於十五秒"
+            "六 － 一 ＝ 五個間隔",
+            "五 × 三 ＝ 十五秒"
           ],
           "expectedKeywords": [
             "5",
@@ -942,12 +965,12 @@
         },
         {
           "stepIndex": 3,
-          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
-          "coachQuestion": "👉 第三步：太棒了，答案是十五秒！很多人不假思索會以為「六是三的兩倍，所以六秒乘以二等於十二秒」。請比較：\n【甲欄】六點敲六下的真實秒數（十五秒） 對比 【乙欄】十二秒。\n請選擇哪一欄較大，並說說為什麼不能直接把六秒乘以二！",
+          "role": "第三步（共三步）：甲欄與乙欄比較",
+          "coachQuestion": "👉 第三步：比較【甲欄：敲六下秒數（十五秒）】與【乙欄：十二秒】，請點選 ＞、＜ 或 ＝！",
           "hint": "提示：間隔數從兩個變成了五個，不是兩倍喔！",
           "thoughtChips": [
-            "甲欄較大（十五秒大於十二秒），因為我們算的是間隔數五個，不是鐘聲數",
-            "甲欄比乙欄多了三秒"
+            "甲 ＞ 乙",
+            "十五秒 ＞ 十二秒"
           ],
           "expectedKeywords": [
             "甲",
@@ -958,7 +981,13 @@
             "十二",
             "間隔",
             "5",
-            "五"
+            "五",
+            "＞",
+            "＜",
+            "＝",
+            ">",
+            "<",
+            "="
           ]
         }
       ]
@@ -977,16 +1006,16 @@
       "visualType": "euler_park",
       "promptScenario": "下圖是一個公園的平面圖（設有南門、西門、東亭、中橋等景點）。要讓遊客一次不重複地走過每一條路，如果入口設在「南門」，出口應該設在哪裡？同時看看五環圖和小房子能不能一筆畫成！",
       "ctyComparison": {
-        "colA": "小房子圖形中「奇點」的個數",
-        "colB": "兩個",
+        "colA": "小房子奇點數",
+        "colB": "二個",
         "correctChoice": "相等",
         "explanation": "小房子圖形中，只有中間橫線兩端連出三條線（共兩個奇點），其餘頂點都是偶數條線（偶點），所以奇點個數剛好是兩個，可以一筆畫成！因此甲欄與乙欄相等。而在公園平面圖中，只有「南門」（連三條路）與「西門」（連五條路）是奇點，所以從南門進必定從西門出！"
       },
       "bonusChallenge": {
         "question": "🎯 進階挑戰（加十顆寶石）：為什麼左邊的「五環圖（五個相交的圓圈）」也能一筆畫成？它有幾個奇點？",
         "chips": [
-          "零個奇點！因為每個交點都連出四條線（全是偶點），從哪裡出發都能回到原點",
-          "兩個奇點",
+          "零個奇點（全是偶點）",
+          "二個奇點",
           "五個奇點"
         ],
         "expectedKeywords": [
@@ -1004,9 +1033,8 @@
           "coachQuestion": "👉 第一步：在一筆畫問題中，只要路過一個點，就必須「一進一出」（每次用掉兩條路）。如果入口設在「南門」（南門連了三條路，是奇點），請數一數公園圖上的其他景點，還有哪一個景點連出了「奇數條路」？",
           "hint": "🗺️ 全題探索藍圖：我們先找出公園地圖中連接奇數條路的「奇點」，確定唯一的出口，再檢驗小房子的一筆畫條件！ 🗺️ 整體思路：奇進奇出規律 👉 第一步提示：數一數東亭（四條）、中橋（四條）、西門（幾條？）。哪個門連了五條路？",
           "thoughtChips": [
-            "西門連了五條線，是圖中另一個奇點",
-            "東亭和中橋都連了四條線（偶點），只有西門連了五條線",
-            "除了南門（三條）之外，只有西門（五條）是奇點"
+            "西門（五條路，奇點）",
+            "東亭、中橋（四條路，偶點）"
           ],
           "expectedKeywords": [
             "西",
@@ -1020,8 +1048,8 @@
           "coachQuestion": "👉 第二步：好眼力！西門連了五條路。既然一筆畫必須「從一個奇點出發，在另一個奇點結束」，當遊客從南門進公園，出口一定在哪裡？另外，請看右邊的「小房子」圖形，它有幾個奇點？能不能一筆畫成？",
           "hint": "提示：公園出口就是另一個奇點「西門」！再數數小房子每個角連出幾條線。",
           "thoughtChips": [
-            "公園出口應設在西門；小房子有兩個奇點，可以一筆畫成",
-            "從南門進，一定從西門出！"
+            "出口在西門",
+            "小房子：二個奇點"
           ],
           "expectedKeywords": [
             "西",
@@ -1034,12 +1062,12 @@
         },
         {
           "stepIndex": 3,
-          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
-          "coachQuestion": "👉 第三步：現在請完成數量比較：\n【甲欄】小房子圖形中「奇點」的個數 對比 【乙欄】兩個。\n兩欄是什麼關係？如果一個圖形有四個奇點，它還能一筆畫成嗎？",
+          "role": "第三步（共三步）：甲欄與乙欄比較",
+          "coachQuestion": "👉 第三步：比較【甲欄：小房子奇點數】與【乙欄：二個】，請點選 ＞、＜ 或 ＝！",
           "hint": "提示：小房子剛好有兩個奇點（一個作為起點、一個作為終點）。",
           "thoughtChips": [
-            "兩欄相等（都是兩個奇點），所以小房子可以一筆畫成",
-            "如果有四個奇點就不能一筆畫成了，至少要兩筆"
+            "甲 ＝ 乙",
+            "二個 ＝ 二個"
           ],
           "expectedKeywords": [
             "相等",
@@ -1047,7 +1075,13 @@
             "2",
             "兩",
             "二",
-            "不能"
+            "不能",
+            "＞",
+            "＜",
+            "＝",
+            ">",
+            "<",
+            "="
           ]
         }
       ]
@@ -1066,15 +1100,15 @@
       "visualType": "triangles_grid",
       "promptScenario": "觀察第三十七頁的兩個經典圖形：（一）由頂點連出射線分成的五個基本小三角形，一共能組成多少個三角形？（二）在二乘三（兩橫排、三直列）的網格中，一共有多少個長方形？",
       "ctyComparison": {
-        "colA": "圖一中三角形的總個數",
-        "colB": "圖二（二乘三網格）中長方形的總個數",
+        "colA": "三角形總數",
+        "colB": "長方形總數",
         "correctChoice": "乙",
         "explanation": "圖一有五個基本小三角形，總數為五加四加三加二加一等於十五個三角形。圖二是二乘三網格，橫向有三加二加一等於六種選法，縱向有二加一等於三種選法，共有六乘以三等於十八個長方形！因此乙欄（十八個）大於甲欄（十五個）。"
       },
       "bonusChallenge": {
         "question": "🎯 進階挑戰（加十顆寶石）：如果在圖一的大三角形裡再多畫一條射線，變成六個基本小三角形，三角形總數會變成幾個？",
         "chips": [
-          "二十一個，因為十五加六等於二十一",
+          "二十一個（十五 ＋ 六 ＝ 二十一）",
           "十八個",
           "二十個"
         ],
@@ -1090,8 +1124,8 @@
           "coachQuestion": "👉 第一步：先看左邊的三角形圖：單獨一個小三角形有五個；由兩個小三角形拼成的有四個；三個拼成的有三個……把全部加起來（五加四加三加二加一），一共有多少個三角形？",
           "hint": "🗺️ 全題探索藍圖：我們先用「倒樓梯加法」算出三角形的總數，再用「橫乘豎」算出網格長方形的總數，最後一較高下！ 🗺️ 整體思路：分類有序計數 👉 第一步提示：計算五加四加三加二加一等於多少？",
           "thoughtChips": [
-            "一共有十五個三角形，因為五加四加三加二加一等於十五",
-            "單個有五個，合起來是十五個"
+            "五 ＋ 四 ＋ 三 ＋ 二 ＋ 一 ＝ 十五個",
+            "十五個三角形"
           ],
           "expectedKeywords": [
             "15",
@@ -1104,8 +1138,8 @@
           "coachQuestion": "👉 第二步：十五個三角形完全正確！現在看右邊上下兩層、左右三格的長方形網格：單看一層（三格）可以數出三加二加一等於六個長方形。那麼「上層六個、下層六個、上下兩層合起來又有六個」，一共是多少個長方形？",
           "hint": "提示：上層六個加下層六個加上下合併六個（也就是六乘以三）！",
           "thoughtChips": [
-            "一共有十八個長方形，因為六乘以三等於十八",
-            "上層六個、下層六個、合起來六個，共十八個長方形"
+            "六 × 三 ＝ 十八個",
+            "十八個長方形"
           ],
           "expectedKeywords": [
             "18",
@@ -1114,12 +1148,12 @@
         },
         {
           "stepIndex": 3,
-          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
-          "coachQuestion": "👉 第三步：太厲害了！現在比較：\n【甲欄】圖一中三角形的總數（十五個） 對比 【乙欄】圖二中長方形的總數（十八個）。\n請問哪一欄比較大？相差幾個？",
+          "role": "第三步（共三步）：甲欄與乙欄比較",
+          "coachQuestion": "👉 第三步：比較【甲欄：三角形總數（十五個）】與【乙欄：長方形總數（十八個）】，請點選 ＞、＜ 或 ＝！",
           "hint": "提示：比較十五與十八的大小。",
           "thoughtChips": [
-            "乙欄較大，因為長方形有十八個，比三角形的十五個多三個",
-            "十八大於十五，所以乙欄較大"
+            "甲 ＜ 乙",
+            "十五個 ＜ 十八個"
           ],
           "expectedKeywords": [
             "乙",
@@ -1129,7 +1163,13 @@
             "3",
             "十八",
             "十五",
-            "三"
+            "三",
+            "＞",
+            "＜",
+            "＝",
+            ">",
+            "<",
+            "="
           ]
         }
       ]
@@ -1148,17 +1188,17 @@
       "visualType": "apples_tomatoes",
       "promptScenario": "我們來看第十九頁的兩道題：（一）一堆蘋果平均分給六位小朋友，每人分到五個，最後還剩下兩個蘋果。（二）菜場有蘿蔔二百一十八公斤，賣掉十二公斤番茄後，剩下的番茄還比蘿蔔多十九公斤。菜場原來有番茄多少公斤？",
       "ctyComparison": {
-        "colA": "原本蘋果的總個數",
-        "colB": "原本番茄比蘿蔔多的公斤數",
+        "colA": "原本蘋果數",
+        "colB": "番茄多出的公斤數",
         "correctChoice": "甲",
         "explanation": "原本蘋果有六乘以五加二等於三十二個（甲欄等於三十二）。賣掉十二公斤番茄後還比蘿蔔多十九公斤，代表賣掉之前番茄比蘿蔔多十九加十二等於三十一公斤（乙欄等於三十一，而原本番茄總重為二百一十八加三十一等於二百四十九公斤）。因為三十二大於三十一，所以甲欄較大！"
       },
       "bonusChallenge": {
         "question": "🎯 進階挑戰（加十顆寶石）：在蘋果題中，如果想讓六位小朋友每人都分到六個蘋果而且剛好分完，還需要再補幾個蘋果？",
         "chips": [
-          "再補四個蘋果，因為已經剩兩個，六減二等於四",
-          "再補兩個蘋果",
-          "再補六個蘋果"
+          "四個（六 － 二 ＝ 四）",
+          "二個",
+          "六個"
         ],
         "expectedKeywords": [
           "4",
@@ -1172,8 +1212,8 @@
           "coachQuestion": "👉 第一步：六位小朋友每人分到五個蘋果，最後還剩下兩個。請問這堆蘋果原本一共有幾個？",
           "hint": "🗺️ 全題探索藍圖：我們先算出分出去又剩下的蘋果總數，再用「時光倒流法」加回賣掉的番茄，最後比較兩個隱藏數量！ 🗺️ 整體思路：先乘後加 👉 第一步提示：六人乘以五個，再加上剩下的兩個。",
           "thoughtChips": [
-            "原本有三十二個蘋果，因為六乘以五加二等於三十二",
-            "分出去三十個加上剩下兩個，共三十二個"
+            "六 × 五 ＋ 二 ＝ 三十二個",
+            "三十二個蘋果"
           ],
           "expectedKeywords": [
             "32",
@@ -1188,8 +1228,8 @@
           "coachQuestion": "👉 第二步：三十二個蘋果完全正確！現在看番茄題：蘿蔔有二百一十八公斤。番茄賣掉十二公斤之後，還比蘿蔔多十九公斤。如果我們把賣掉的十二公斤番茄「拿回來」，原本番茄比蘿蔔多幾公斤？原本有番茄多少公斤？",
           "hint": "提示：把賣掉的十二公斤加回來，原本比蘿蔔多十九加十二等於三十一公斤！",
           "thoughtChips": [
-            "原本番茄比蘿蔔多三十一公斤（十九加十二等於三十一），原本有二百四十九公斤",
-            "賣掉後剩二百三十七公斤，加回十二公斤等於二百四十九公斤"
+            "十九 ＋ 十二 ＝ 三十一公斤",
+            "二百三十七 ＋ 十二 ＝ 二百四十九公斤"
           ],
           "expectedKeywords": [
             "31",
@@ -1201,12 +1241,12 @@
         },
         {
           "stepIndex": 3,
-          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
-          "coachQuestion": "👉 第三步：太棒了，原本有二百四十九公斤番茄！現在請看這道巧妙的數量比較：\n【甲欄】原本蘋果的總個數（三十二） 對比 【乙欄】原本番茄比蘿蔔多的公斤數（十九加十二等於三十一）。\n請問哪一欄比較大？",
+          "role": "第三步（共三步）：甲欄與乙欄比較",
+          "coachQuestion": "👉 第三步：比較【甲欄：原本蘋果數（三十二個）】與【乙欄：番茄多出的公斤數（三十一公斤）】，請點選 ＞、＜ 或 ＝！",
           "hint": "提示：比較三十二和三十一的大小（甚至不用管二百一十八這個數字）！",
           "thoughtChips": [
-            "甲欄較大，因為三十二大於三十一",
-            "蘋果有三十二個，原本番茄比蘿蔔多三十一公斤，所以甲欄較大"
+            "甲 ＞ 乙",
+            "三十二 ＞ 三十一"
           ],
           "expectedKeywords": [
             "甲",
@@ -1214,7 +1254,13 @@
             "32",
             "31",
             "三十二",
-            "三十一"
+            "三十一",
+            "＞",
+            "＜",
+            "＝",
+            ">",
+            "<",
+            "="
           ]
         }
       ]
@@ -1233,17 +1279,17 @@
       "visualType": "farm_stars",
       "promptScenario": "結合第四十二至四十三頁的兩道倍數題：（一）農場裡有六隻豬，羊是豬的兩倍，奶牛是豬的三倍多兩隻。（二）姐姐和妹妹比賽摺星星，姐姐摺了二十七個，是妹妹的四倍多三個。請問妹妹摺了多少個星星？",
       "ctyComparison": {
-        "colA": "農場裡「奶牛」的隻數",
-        "colB": "妹妹摺星星數量的三倍",
+        "colA": "奶牛隻數",
+        "colB": "妹妹星星數 × 三",
         "correctChoice": "甲",
         "explanation": "奶牛數量等於六乘以三加二等於二十隻（甲欄等於二十）。姐姐摺了二十七個，先減去多出的三個得二十四個，妹妹摺了二十四除以四等於六個；妹妹的三倍是六乘以三等於十八個（乙欄等於十八）。因為二十大於十八，所以甲欄較大！"
       },
       "bonusChallenge": {
         "question": "🎯 進階挑戰（加十顆寶石）：在農場裡，豬（六隻）、羊（十二隻）和奶牛（二十隻）三種動物加起來一共有多少隻？",
         "chips": [
-          "一共三十八隻，因為六加十二加二十等於三十八",
-          "一共三十六隻",
-          "一共三十二隻"
+          "三十八隻（六 ＋ 十二 ＋ 二十）",
+          "三十六隻",
+          "三十二隻"
         ],
         "expectedKeywords": [
           "38",
@@ -1257,8 +1303,8 @@
           "coachQuestion": "👉 第一步：農場有六隻豬，羊是豬的兩倍，奶牛是豬的「三倍多兩隻」。請問羊和奶牛分別有幾隻？",
           "hint": "🗺️ 全題探索藍圖：我們先順向算出農場的羊和奶牛，再用「去尾法」逆向算出妹妹摺了幾顆星星，最後進行倍數數量比較！ 🗺️ 整體思路：倍數線段法 👉 第一步提示：羊等於六乘以二；奶牛等於六乘以三加二。",
           "thoughtChips": [
-            "羊有十二隻（六乘以二），奶牛有二十隻（六乘以三加二等於二十）",
-            "奶牛是十八加二等於二十隻"
+            "羊：六 × 二 ＝ 十二隻",
+            "奶牛：六 × 三 ＋ 二 ＝ 二十隻"
           ],
           "expectedKeywords": [
             "12",
@@ -1273,8 +1319,8 @@
           "coachQuestion": "👉 第二步：完全正確，羊十二隻、奶牛二十隻！現在看摺星星：姐姐摺了二十七個，是妹妹的「四倍多三個」。如果我們先把多出來的三個拿走（二十七減三），剩下的剛好是妹妹的四倍。請問妹妹摺了幾個星星？",
           "hint": "提示：先算二十七減三等於二十四，再用二十四除以四！",
           "thoughtChips": [
-            "妹妹摺了六個星星，因為二十七減三等於二十四，二十四除以四等於六",
-            "先減三得到二十四，再除以四等於六個"
+            "二十七 － 三 ＝ 二十四",
+            "二十四 ÷ 四 ＝ 六顆"
           ],
           "expectedKeywords": [
             "6",
@@ -1285,12 +1331,12 @@
         },
         {
           "stepIndex": 3,
-          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
-          "coachQuestion": "👉 第三步：太出色了，妹妹摺了六個！最後請看數量比較：\n【甲欄】農場裡「奶牛」的隻數（二十） 對比 【乙欄】妹妹摺星星數量的三倍（六乘以三）。\n請問哪一欄比較大？相差多少？",
+          "role": "第三步（共三步）：甲欄與乙欄比較",
+          "coachQuestion": "👉 第三步：比較【甲欄：奶牛隻數（二十隻）】與【乙欄：妹妹星星數 × 三（十八顆）】，請點選 ＞、＜ 或 ＝！",
           "hint": "提示：奶牛有二十隻，妹妹的三倍是六乘以三等於十八。",
           "thoughtChips": [
-            "甲欄較大，因為奶牛有二十隻，妹妹的三倍是十八，甲欄多二",
-            "二十大於十八，所以甲欄較大"
+            "甲 ＞ 乙",
+            "二十 ＞ 十八（六 × 三）"
           ],
           "expectedKeywords": [
             "甲",
@@ -1301,7 +1347,13 @@
             "二十",
             "十八",
             "二",
-            "兩"
+            "兩",
+            "＞",
+            "＜",
+            "＝",
+            ">",
+            "<",
+            "="
           ]
         }
       ]
@@ -1320,17 +1372,17 @@
       "visualType": "apples_tomatoes",
       "promptScenario": "小可在超市看到薯片每包八元，可樂每瓶七元。她買了三包薯片和五瓶可樂，請問小可一共花了多少錢？",
       "ctyComparison": {
-        "colA": "買五瓶可樂花的錢（元）",
-        "colB": "買三包薯片花的錢加十元",
+        "colA": "五瓶可樂價錢",
+        "colB": "三包薯片 ＋ 十元",
         "correctChoice": "甲",
         "explanation": "三包薯片花了八乘以三等於二十四元；五瓶可樂花了七乘以五等於三十五元，總共花了二十四加三十五等於五十九元。甲欄（五瓶可樂三十五元）對比乙欄（二十四加十等於三十四元），三十五大於三十四，所以甲欄較大！"
       },
       "bonusChallenge": {
         "question": "🎯 進階挑戰（加十顆寶石）：如果小可帶了一張一百元紙鈔去付這五十九元，收銀員應該找回她多少元？",
         "chips": [
-          "找回四十一元，因為一百減五十九等於四十一",
-          "找回四十九元",
-          "找回五十元"
+          "四十一元（一百 － 五十九）",
+          "四十九元",
+          "五十元"
         ],
         "expectedKeywords": [
           "41",
@@ -1344,8 +1396,8 @@
           "coachQuestion": "👉 第一步：薯片每包八元，買三包要多少元？可樂每瓶七元，買五瓶要多少元？",
           "hint": "🗺️ 全題探索藍圖：我們先分別算出三包薯片和五瓶可樂各多少元，再加起來算出總價，最後比較甲欄與乙欄！ 🗺️ 整體思路：單價乘以數量 👉 第一步提示：先算八乘以三，再算七乘以五。",
           "thoughtChips": [
-            "三包薯片是二十四元（八乘以三），五瓶可樂是三十五元（七乘以五）",
-            "薯片二十四元，可樂三十五元"
+            "薯片：八 × 三 ＝ 二十四元",
+            "可樂：七 × 五 ＝ 三十五元"
           ],
           "expectedKeywords": [
             "24",
@@ -1360,8 +1412,8 @@
           "coachQuestion": "👉 第二步：完全正確！三包薯片二十四元，五瓶可樂三十五元。把這兩筆錢合起來，小可一共花了多少元？",
           "hint": "提示：計算二十四加三十五等於多少？",
           "thoughtChips": [
-            "一共花了五十九元，因為二十四加三十五等於五十九",
-            "二十四加三十五等於五十九元"
+            "二十四 ＋ 三十五 ＝ 五十九元",
+            "共五十九元"
           ],
           "expectedKeywords": [
             "59",
@@ -1370,12 +1422,12 @@
         },
         {
           "stepIndex": 3,
-          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
-          "coachQuestion": "👉 第三步：太棒了，總共是五十九元！現在請看左邊的數量比較：\n【甲欄】買五瓶可樂花的錢（三十五元） 對比 【乙欄】買三包薯片花的錢加十元（二十四加十）。\n請問哪一欄比較大？",
+          "role": "第三步（共三步）：甲欄與乙欄比較",
+          "coachQuestion": "👉 第三步：比較【甲欄：五瓶可樂價錢（三十五元）】與【乙欄：三包薯片 ＋ 十元（三十四元）】，請點選 ＞、＜ 或 ＝！",
           "hint": "提示：甲欄是三十五元，乙欄是二十四加十等於三十四元。",
           "thoughtChips": [
-            "甲欄較大，因為三十五元大於三十四元",
-            "五瓶可樂三十五元比三十四元多一元，所以甲欄較大"
+            "甲 ＞ 乙",
+            "三十五元 ＞ 三十四元（二十四 ＋ 十）"
           ],
           "expectedKeywords": [
             "甲",
@@ -1383,7 +1435,13 @@
             "35",
             "34",
             "三十五",
-            "三十四"
+            "三十四",
+            "＞",
+            "＜",
+            "＝",
+            ">",
+            "<",
+            "="
           ]
         }
       ]
@@ -1402,7 +1460,7 @@
       "visualType": "farm_stars",
       "promptScenario": "冰箱裡有一些牛奶和果汁，果汁有三十六瓶，而且果汁的數量剛好是牛奶數量的四倍。請問牛奶有多少瓶？牛奶和果汁一共有多少瓶？",
       "ctyComparison": {
-        "colA": "冰箱裡牛奶的瓶數",
+        "colA": "牛奶瓶數",
         "colB": "十瓶",
         "correctChoice": "乙",
         "explanation": "果汁有三十六瓶，是牛奶的四倍，求一倍量的牛奶用除法：三十六除以四等於九瓶牛奶！甲欄（九瓶）小於乙欄（十瓶），所以乙欄較大。"
@@ -1410,9 +1468,9 @@
       "bonusChallenge": {
         "question": "🎯 進階挑戰（加十顆寶石）：果汁有三十六瓶，牛奶有九瓶，請問果汁比牛奶多幾瓶？（提示：四倍比一倍多了三倍喔！）",
         "chips": [
-          "多二十七瓶，因為三十六減九等於二十七（也就是九乘以三）",
-          "多二十五瓶",
-          "多三十瓶"
+          "二十七瓶（三十六 － 九）",
+          "二十五瓶",
+          "三十瓶"
         ],
         "expectedKeywords": [
           "27",
@@ -1426,8 +1484,8 @@
           "coachQuestion": "👉 第一步：題目說「果汁有三十六瓶，是牛奶數量的四倍」。如果把牛奶看成「一份」，那麼三十六瓶果汁相當於幾份？應該用乘法還是除法來算牛奶？",
           "hint": "🗺️ 全題探索藍圖：我們先判斷牛奶比較多還是果汁比較多，再用除法算出牛奶的瓶數，最後比較甲欄與乙欄！ 🗺️ 整體思路：已知四份求一份 👉 第一步提示：三十六瓶分成四等份，求其中一份用除法！",
           "thoughtChips": [
-            "果汁是四份，求一份的牛奶應該用除法（三十六除以四）",
-            "牛奶比較少，把三十六平均分成四份"
+            "三十六 ÷ 四",
+            "用除法求一份"
           ],
           "expectedKeywords": [
             "除",
@@ -1443,8 +1501,8 @@
           "coachQuestion": "👉 第二步：思路非常清晰！用三十六除以四，算出牛奶有幾瓶？如果把牛奶和三十六瓶果汁加起來，冰箱裡一共有幾瓶飲料？",
           "hint": "提示：三十六除以四等於九瓶；九加三十六等於四十五瓶。",
           "thoughtChips": [
-            "牛奶有九瓶（三十六除以四等於九），合起來一共有四十五瓶",
-            "牛奶九瓶，總共四十五瓶"
+            "牛奶：三十六 ÷ 四 ＝ 九瓶",
+            "總共：三十六 ＋ 九 ＝ 四十五瓶"
           ],
           "expectedKeywords": [
             "9",
@@ -1455,12 +1513,12 @@
         },
         {
           "stepIndex": 3,
-          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
-          "coachQuestion": "👉 第三步：太出色了，牛奶有九瓶！現在請看數量比較：\n【甲欄】冰箱裡牛奶的瓶數（九瓶） 對比 【乙欄】十瓶。\n請問哪一欄比較大？",
+          "role": "第三步（共三步）：甲欄與乙欄比較",
+          "coachQuestion": "👉 第三步：比較【甲欄：牛奶瓶數（九瓶）】與【乙欄：十瓶】，請點選 ＞、＜ 或 ＝！",
           "hint": "提示：比較九瓶與十瓶的大小。",
           "thoughtChips": [
-            "乙欄較大，因為牛奶是九瓶，小於乙欄的十瓶",
-            "九小於十，所以乙欄較大"
+            "甲 ＜ 乙",
+            "九瓶 ＜ 十瓶"
           ],
           "expectedKeywords": [
             "乙",
@@ -1468,7 +1526,13 @@
             "9",
             "10",
             "九",
-            "十"
+            "十",
+            "＞",
+            "＜",
+            "＝",
+            ">",
+            "<",
+            "="
           ]
         }
       ]
@@ -1480,17 +1544,17 @@
       "visualType": "apples_tomatoes",
       "promptScenario": "小明今年七歲，他的爸爸今年三十五歲。請思考以下兩個問題：第一，當小明長大到十五歲時，爸爸會是多少歲？第二，當爸爸的年齡剛好是小明的四倍時，小明是多少歲？",
       "ctyComparison": {
-        "colA": "當小明十五歲時，爸爸的年齡",
-        "colB": "當爸爸的年齡是小明的三倍時，小明的年齡",
+        "colA": "十五歲時爸爸年齡",
+        "colB": "爸爸是三倍時小明年齡",
         "correctChoice": "甲",
         "explanation": "小明與爸爸的年齡差是三十五減七等於二十八歲，而且年齡差永遠不變。甲欄：當小明十五歲時，爸爸的年齡是十五加二十八等於四十三歲。乙欄：當爸爸的年齡是小明的三倍時，把小明的年齡看成一份，爸爸就是三份，兩人相差兩份；兩份對應二十八歲，所以一份（小明的年齡）是二十八除以二等於十四歲。甲欄（四十三歲）大於乙欄（十四歲），因此甲欄較大。"
       },
       "bonusChallenge": {
         "question": "🎯 進階挑戰（加十顆寶石）：小明的外婆今年六十七歲。當外婆的年齡剛好是小明的六倍時，小明是多少歲？",
         "chips": [
-          "十二歲，因為年齡差六十歲除以五份等於十二",
-          "十歲，因為六十除以六等於十",
-          "十五歲，因為六十七減七再除以四"
+          "十二歲（六十 ÷ 五 ＝ 十二）",
+          "十歲",
+          "十五歲"
         ],
         "expectedKeywords": [
           "十二",
@@ -1506,9 +1570,8 @@
           "coachQuestion": "👉 第一步：小明今年七歲，爸爸今年三十五歲。請問爸爸比小明大幾歲？再過十年後，他們的年齡差會改變嗎？",
           "hint": "🗺️ 全題探索藍圖：年齡問題的關鍵是「年齡差永遠不變」！我們先找出小明和爸爸相差幾歲，再用這個差距算出甲欄和乙欄。 👉 第一步提示：用爸爸今年的三十五歲減去小明今年的七歲。",
           "thoughtChips": [
-            "爸爸比小明大二十八歲，而且年齡差永遠不變",
-            "三十五減七等於二十八歲",
-            "不管過幾年，兩人永遠相差二十八歲"
+            "三十五 － 七 ＝ 二十八歲",
+            "年齡差二十八歲"
           ],
           "expectedKeywords": [
             "二十八",
@@ -1522,9 +1585,8 @@
           "coachQuestion": "👉 第二步：我們知道兩人永遠相差二十八歲！現在請算一算：第一，當小明十五歲時，爸爸是幾歲？第二，當爸爸的年齡是小明的三倍時，爸爸比小明多出了「兩倍」，這兩倍剛好是二十八歲，那麼小明是幾歲？",
           "hint": "提示：甲欄用十五加二十八；乙欄把小明的年齡看成一份，爸爸是三份，相差的兩份等於二十八歲，用二十八除以二就能算出小明的歲數！",
           "thoughtChips": [
-            "甲欄爸爸是四十三歲，乙欄小明是十四歲",
-            "十五加二十八等於四十三歲",
-            "二十八除以二等於十四歲"
+            "甲：十五 ＋ 二十八 ＝ 四十三歲",
+            "乙：二十八 ÷ 二 ＝ 十四歲"
           ],
           "expectedKeywords": [
             "四十三",
@@ -1535,20 +1597,25 @@
         },
         {
           "stepIndex": 3,
-          "role": "第三步（共三步）：甲欄與乙欄數量比較挑戰",
-          "coachQuestion": "👉 第三步：太棒了！甲欄（小明十五歲時爸爸的年齡）是四十三歲，乙欄（爸爸年齡是小明三倍時小明的年齡）是十四歲。請點選「甲欄較大」或「乙欄較大」並說說原因！",
+          "role": "第三步（共三步）：甲欄與乙欄比較",
+          "coachQuestion": "👉 第三步：比較【甲欄：十五歲時爸爸年齡（四十三歲）】與【乙欄：爸爸是三倍時小明年齡（十四歲）】，請點選 ＞、＜ 或 ＝！",
           "hint": "提示：比較四十三歲與十四歲的大小，哪一欄的歲數比較大？",
           "thoughtChips": [
-            "甲欄較大，因為四十三歲大於十四歲",
-            "爸爸的四十三歲比小明的十四歲大得多",
-            "我選擇甲欄較大"
+            "甲 ＞ 乙",
+            "四十三歲 ＞ 十四歲"
           ],
           "expectedKeywords": [
             "甲",
             "左",
             "四十三",
             "十四",
-            "大"
+            "大",
+            "＞",
+            "＜",
+            "＝",
+            ">",
+            "<",
+            "="
           ]
         }
       ],
@@ -1835,6 +1902,13 @@
         if (!("speechSynthesis" in window)) return;
         var clean = String(text)
           .replace(/[🗺️👉👈⚖️❓🦉💎⭐🔧🎯🌲🕰️✏️📐🍅🏆🔊🎙️💡✅🏁]/g, "")
+          .replace(/[＞>]/g, " 大於 ")
+          .replace(/[＜<]/g, " 小於 ")
+          .replace(/[＝=]/g, " 等於 ")
+          .replace(/[＋+]/g, " 加 ")
+          .replace(/[－-]/g, " 減 ")
+          .replace(/[×*]/g, " 乘以 ")
+          .replace(/[÷/]/g, " 除以 ")
           .replace(/\n+/g, "。");
         var utter = new SpeechSynthesisUtterance(clean);
         utter.lang = "zh-CN";
@@ -2473,9 +2547,16 @@
       renderVisualDiagram(m.visualType);
 
       var cmp = m.ctyComparison || { colA: "甲欄", colB: "乙欄" };
-      document.getElementById("cty-col-a").textContent = cmp.colA;
-      document.getElementById("cty-col-b").textContent = cmp.colB;
-      document.getElementById("cty-status-pill").textContent = "可隨時點選";
+      document.getElementById("cty-col-a").textContent = simplifyComparisonLabel(cmp.colA);
+      document.getElementById("cty-col-b").textContent = simplifyComparisonLabel(cmp.colB);
+      document.getElementById("cty-status-pill").textContent = "點選 ＞ ＜ ＝";
+      var liveSignEl = document.getElementById("cty-live-sign");
+      if (liveSignEl) liveSignEl.textContent = "？";
+      var directFb = document.getElementById("direct-submit-feedback");
+      if (directFb) {
+        directFb.className = "hidden mt-2 text-xs sm:text-sm font-bold rounded-xl p-2.5 text-center";
+        directFb.textContent = "";
+      }
       updateCtyButtonsUi();
 
       document.getElementById("review-panel").classList.add("hidden");
@@ -2571,27 +2652,107 @@
       if (inputEl) inputEl.value = "";
     }
 
+    function simplifyComparisonLabel(str) {
+      var s = String(str || "").trim();
+      if (!s) return s;
+      // Strip redundant wrappers like "異常球（五號球）的重量" -> "五號球"
+      var ballMatch = s.match(/^(?:異常球|標準球)[（(](.+?)[）)]的重量$/);
+      if (ballMatch) return ballMatch[1];
+      s = s.replace(/^[（(](.+?)[）)]的總重量$/, "$1");
+      s = s.replace(/的總重量$/, "");
+      s = s.replace(/的重量$/, "");
+      s = s.replace(/的總個數$/, "總數");
+      s = s.replace(/^圖一中/, "").replace(/^圖二[（(].+?[）)]中/, "");
+      s = s.replace(/^相鄰兩棵樹之間的距離[（(]米[）)]$/, "兩樹間距");
+      s = s.replace(/^六點鐘敲六下所需的秒數$/, "敲六下秒數");
+      s = s.replace(/^十二秒[（(].+?[）)]$/, "十二秒");
+      s = s.replace(/^小房子圖形中「奇點」的個數$/, "小房子奇點數");
+      s = s.replace(/^農場裡「奶牛」的隻數$/, "奶牛隻數");
+      s = s.replace(/^妹妹摺星星數量的三倍$/, "妹妹星星數 × 三");
+      s = s.replace(/^買五瓶可樂花的錢[（(]元[）)]$/, "五瓶可樂價錢");
+      s = s.replace(/^買三包薯片花的錢加十元$/, "三包薯片 ＋ 十元");
+      s = s.replace(/^冰箱裡牛奶的瓶數$/, "牛奶瓶數");
+      return s;
+    }
+
     function selectCtyChoice(choice) {
       appState.selectedCtyChoice = choice;
       updateCtyButtonsUi();
-      var choiceNames = {
-        "甲": "甲欄較大",
-        "乙": "乙欄較大",
-        "相等": "兩欄相等",
-        "不足": "條件不足"
+      var choiceSigns = {
+        "甲": "＞",
+        "乙": "＜",
+        "相等": "＝",
+        "不足": "？"
       };
-      var label = choiceNames[choice] || choice;
-      document.getElementById("cty-status-pill").textContent = "已選：" + label;
+      var choiceExpr = {
+        "甲": "甲 ＞ 乙",
+        "乙": "甲 ＜ 乙",
+        "相等": "甲 ＝ 乙",
+        "不足": "？ 條件不足"
+      };
+      var sign = choiceSigns[choice] || "？";
+      var expr = choiceExpr[choice] || choice;
+      document.getElementById("cty-status-pill").textContent = "已選：" + expr;
+      var liveSignEl = document.getElementById("cty-live-sign");
+      if (liveSignEl) liveSignEl.textContent = sign;
+
+      var directFb = document.getElementById("direct-submit-feedback");
+      if (directFb) directFb.classList.add("hidden");
 
       var m = getCurrentMission();
       if (m && appState.currentStepIndex === m.steps.length - 1) {
         var inputEl = document.getElementById("student-input");
-        if (inputEl && inputEl.value.indexOf(label) === -1) {
+        if (inputEl && inputEl.value.indexOf(sign) === -1 && inputEl.value.indexOf(expr) === -1) {
           var cur = inputEl.value.trim();
-          inputEl.value = cur ? ("我選擇【" + label + "】，因為" + cur) : ("我選擇【" + label + "】");
+          inputEl.value = cur ? (expr + "；" + cur) : expr;
         }
       }
-      showToast("已選擇數量比較答案：" + label, "⚖️");
+      showToast("已選：" + expr, "⚖️");
+    }
+
+    function submitDirectAnswer() {
+      if (appState.levelCompleted) return;
+      var m = getCurrentMission();
+      if (!m) return;
+
+      var directFb = document.getElementById("direct-submit-feedback");
+      if (!appState.selectedCtyChoice) {
+        if (directFb) {
+          directFb.className = "mt-2 text-xs sm:text-sm font-bold rounded-xl p-2.5 text-center bg-amber-50 text-amber-900 border border-amber-300";
+          directFb.textContent = "⚠️ 請先點選上方的 ＞、＜、＝ 或 ？ 再提交喔！";
+        }
+        showToast("請先點選 ＞、＜、＝ 或 ？", "⚖️");
+        return;
+      }
+
+      var ctyCorrect = (m.ctyComparison && m.ctyComparison.correctChoice) ? m.ctyComparison.correctChoice : "乙";
+      var choiceSigns = { "甲": "＞", "乙": "＜", "相等": "＝", "不足": "？" };
+      var pickedSign = choiceSigns[appState.selectedCtyChoice] || appState.selectedCtyChoice;
+      var colA = simplifyComparisonLabel(m.ctyComparison ? m.ctyComparison.colA : "甲欄");
+      var colB = simplifyComparisonLabel(m.ctyComparison ? m.ctyComparison.colB : "乙欄");
+
+      if (appState.selectedCtyChoice === ctyCorrect) {
+        // Milo got the right answer directly on the left!
+        var remainingSteps = Math.max(1, (m.steps ? m.steps.length : 3) - appState.stepHistory.length);
+        appState.brilliantCount += remainingSteps;
+        var directSummary = colA + " " + pickedSign + " " + colB;
+        appState.stepHistory.push({
+          stepIndex: appState.stepHistory.length + 1,
+          role: "直接破關",
+          studentText: directSummary,
+          badge: "💎 絕妙推理!!",
+          coachPraise: "不用看分步提示就直接推算出正確答案，太厲害了！"
+        });
+        renderReasoningLog();
+        finishMission(m, "太精彩了！你直接推算出「" + directSummary + "」，一舉破關！");
+      } else {
+        appState.quickFixCount++;
+        if (directFb) {
+          directFb.className = "mt-2 text-xs sm:text-sm font-bold rounded-xl p-2.5 text-center bg-amber-50 text-amber-900 border border-amber-300";
+          directFb.textContent = "🤔 「" + colA + " " + pickedSign + " " + colB + "」還差一點點喔！再算一算，或跟著右邊的分步問題一步步推理吧！";
+        }
+        showToast("🤔 答案還差一點點，再想一想！", "🦉");
+      }
     }
 
     function updateCtyButtonsUi() {
@@ -2632,9 +2793,9 @@
 
       if (isFinalStep) {
         var choseRight = (appState.selectedCtyChoice === ctyCorrect) ||
-          (ctyCorrect === "甲" && (text.indexOf("甲") !== -1 || text.indexOf("左") !== -1)) ||
-          (ctyCorrect === "乙" && (text.indexOf("乙") !== -1 || text.indexOf("右") !== -1)) ||
-          (ctyCorrect === "相等" && (text.indexOf("相等") !== -1 || text.indexOf("一樣") !== -1));
+          (ctyCorrect === "甲" && (text.indexOf("＞") !== -1 || text.indexOf(">") !== -1 || text.indexOf("甲") !== -1 || text.indexOf("左") !== -1)) ||
+          (ctyCorrect === "乙" && (text.indexOf("＜") !== -1 || text.indexOf("<") !== -1 || text.indexOf("乙") !== -1 || text.indexOf("右") !== -1)) ||
+          (ctyCorrect === "相等" && (text.indexOf("＝") !== -1 || text.indexOf("=") !== -1 || text.indexOf("相等") !== -1 || text.indexOf("一樣") !== -1));
         if (choseRight && matchedCount >= 1) {
           badge = "💎 絕妙推理!!";
           praise = "太精彩了！你不僅找出了正確的甲欄與乙欄大小關係，還把背後的數學結構解釋得清清楚楚！";
